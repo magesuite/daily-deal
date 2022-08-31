@@ -155,13 +155,14 @@ class AddOfferToCart implements \Magento\Framework\Event\ObserverInterface
     {
         $request = new \Magento\Framework\DataObject(['qty' => $qty]);
 
-        $product->addCustomOption(
+        $regularItemProduct = clone $product;
+        $regularItemProduct->addCustomOption(
             \MageSuite\DailyDeal\Service\OfferManager::ITEM_OPTION_DD_OFFER,
             false
         );
 
         try {
-            $this->cart->getQuote()->addProduct($product, $request);
+            $this->cart->getQuote()->addProduct($regularItemProduct, $request);
         } catch (\Magento\Framework\Exception\LocalizedException $e) {}
     }
 }
