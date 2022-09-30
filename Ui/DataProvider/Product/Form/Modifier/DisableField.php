@@ -2,7 +2,7 @@
 
 namespace MageSuite\DailyDeal\Ui\DataProvider\Product\Form\Modifier;
 
-class ReadOnly extends \Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\AbstractModifier
+class DisableField extends \Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\AbstractModifier
 {
     protected $arrayManager;
 
@@ -14,7 +14,7 @@ class ReadOnly extends \Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Ab
 
     public function modifyMeta(array $meta)
     {
-        $meta = $this->addReadOnly($meta);
+        $meta = $this->disableField($meta);
 
         return $meta;
     }
@@ -24,7 +24,7 @@ class ReadOnly extends \Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Ab
         return $data;
     }
 
-    protected function addReadOnly($meta)
+    protected function disableField($meta)
     {
         $field = 'daily_deal_enabled';
 
