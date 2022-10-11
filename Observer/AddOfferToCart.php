@@ -33,13 +33,12 @@ class AddOfferToCart implements \Magento\Framework\Event\ObserverInterface
             return $this;
         }
 
-        $items = $observer->getEvent()->getData('items');
+        $item = $observer->getEvent()->getData('quote_item');
 
-        if (empty($items)) {
+        if (empty($item)) {
             return $this;
         }
 
-        $item = array_shift($items);
         $item = $item->getParentItem() ? $item->getParentItem() : $item;
 
         $product = $item->getProduct();
@@ -91,7 +90,7 @@ class AddOfferToCart implements \Magento\Framework\Event\ObserverInterface
         $qtyLeft = $qty - $offerLimit;
 
         $this->addRegularItem(
-            $product,
+            $observer->getEvent()->getData('product'),
             $qtyLeft
         );
 
