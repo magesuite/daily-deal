@@ -26,6 +26,13 @@
                     <ticket_id>MGS-4547</ticket_id>
                 </entry>
             </tag>
+            <tag version="v2.1.7" date="2022-10-11">
+                <entry>
+                    <type>FIX</type>
+                    <overview>Revoke the changes fixing related products special price</overview>
+                    <ticket_id>HAKA-1602</ticket_id>
+                </entry>
+            </tag>
         </changelog>
     </module>
 </config>
