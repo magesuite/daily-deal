@@ -33,6 +33,13 @@
                     <ticket_id>HAKA-1602</ticket_id>
                 </entry>
             </tag>
+            <tag version="v2.1.8" date="2022-10-27">
+                <entry>
+                    <type>FIX</type>
+                    <overview>Fix the checkout price of the related product that is the daily deal</overview>
+                    <ticket_id>HAKA-1602</ticket_id>
+                </entry>
+            </tag>
         </changelog>
     </module>
 </config>
