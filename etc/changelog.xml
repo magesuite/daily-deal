@@ -33,7 +33,7 @@
                     <ticket_id>HAKA-1602</ticket_id>
                 </entry>
             </tag>
-            <tag version="v2.1.8" date="2022-10-27">
+            <tag version="v2.1.8" date="2022-11-15">
                 <entry>
                     <type>FIX</type>
                     <overview>Fix the checkout price of the related product that is the daily deal</overview>
