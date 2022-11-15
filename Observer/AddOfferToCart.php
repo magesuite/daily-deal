@@ -33,9 +33,15 @@ class AddOfferToCart implements \Magento\Framework\Event\ObserverInterface
             return $this;
         }
 
-        $item = $observer->getEvent()->getData('quote_item');
+        $items = $observer->getEvent()->getData('items');
+        if (empty($items)) {
+            return $this;
+        }
 
-        if (empty($item)) {
+        $item = array_shift($items);
+
+        $isDailyDealCustomOption = $item->getProduct()->getCustomOption(\MageSuite\DailyDeal\Service\OfferManager::ITEM_OPTION_DD_OFFER);
+        if ($isDailyDealCustomOption && $isDailyDealCustomOption->getValue() === false) {
             return $this;
         }
 
@@ -90,7 +96,7 @@ class AddOfferToCart implements \Magento\Framework\Event\ObserverInterface
         $qtyLeft = $qty - $offerLimit;
 
         $this->addRegularItem(
-            $observer->getEvent()->getData('product'),
+            $product,
             $qtyLeft
         );
 
