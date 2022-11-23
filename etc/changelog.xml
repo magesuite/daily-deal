@@ -40,6 +40,13 @@
                     <ticket_id>HAKA-1602</ticket_id>
                 </entry>
             </tag>
+            <tag version="v2.1.9" date="2022-10-11">
+                <entry>
+                    <type>REFACTOR</type>
+                    <overview>Move logic the 'add offer to cart' logic from the observer to a service class.</overview>
+                    <ticket_id>MGP-1060</ticket_id>
+                </entry>
+            </tag>
         </changelog>
     </module>
 </config>
