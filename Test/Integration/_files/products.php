@@ -1,7 +1,5 @@
 <?php
 
-use Magento\Framework\App\Filesystem\DirectoryList;
-
 $objectManager = \Magento\TestFramework\Helper\Bootstrap::getObjectManager();
 $productRepository = $objectManager->create(\Magento\Catalog\Api\ProductRepositoryInterface::class);
 $product = $objectManager->create('Magento\Catalog\Model\Product');
@@ -88,27 +86,6 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
 $product = $objectManager->create('Magento\Catalog\Model\Product');
 
 $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
-    ->setId(604)
-    ->setAttributeSetId(4)
-    ->setName('Actual offer')
-    ->setSku('actual_offer')
-    ->setUrlKey('actual_offer')
-    ->setPrice(20)
-    ->setVisibility(\Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH)
-    ->setStatus(\Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED)
-    ->setWebsiteIds([1])
-    ->setStockData(['use_config_manage_stock' => 1, 'qty' => 100, 'is_qty_decimal' => 0, 'is_in_stock' => 1])
-    ->setCanSaveCustomOptions(true)
-    ->setDailyDealEnabled(1)
-    ->setDailyDealLimit(20)
-    ->setDailyDealFrom('2000-03-14 00:00:00')
-    ->setDailyDealTo('2035-03-25 08:00:00')
-    ->setDailyDealPrice(5)
-    ->save();
-
-$product = $objectManager->create('Magento\Catalog\Model\Product');
-
-$product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setId(605)
     ->setAttributeSetId(4)
     ->setName('Offer with smaller qty')
@@ -125,6 +102,37 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setDailyDealFrom('2000-03-14 00:00:00')
     ->setDailyDealTo('2035-03-25 08:00:00')
     ->setDailyDealPrice(5)
+    ->save();
+
+
+/** @var  \Magento\Catalog\Api\Data\ProductLinkInterface $productLinks */
+$productLinks = $objectManager->create('Magento\Catalog\Api\Data\ProductLinkInterface');
+$linkData = $productLinks
+    ->setSku('actual_offer')
+    ->setLinkedProductSku('smaller_qty')
+    ->setLinkType("related");
+$relatedProducts[] = $linkData;
+
+$product = $objectManager->create('Magento\Catalog\Model\Product');
+
+$product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
+    ->setId(604)
+    ->setAttributeSetId(4)
+    ->setName('Actual offer')
+    ->setSku('actual_offer')
+    ->setUrlKey('actual_offer')
+    ->setPrice(20)
+    ->setVisibility(\Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH)
+    ->setStatus(\Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED)
+    ->setWebsiteIds([1])
+    ->setStockData(['use_config_manage_stock' => 1, 'qty' => 100, 'is_qty_decimal' => 0, 'is_in_stock' => 1])
+    ->setCanSaveCustomOptions(true)
+    ->setDailyDealEnabled(1)
+    ->setDailyDealLimit(20)
+    ->setDailyDealFrom('2000-03-14 00:00:00')
+    ->setDailyDealTo('2035-03-25 08:00:00')
+    ->setDailyDealPrice(5)
+    ->setProductLinks($relatedProducts)
     ->save();
 
 $product = $objectManager->create('Magento\Catalog\Model\Product');
@@ -148,6 +156,7 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setDailyDealTo('2035-03-25 08:00:00')
     ->setDailyDealPrice(10)
     ->save();
+
 
 $bundleProduct = $objectManager->create(\Magento\Catalog\Model\Product::class);
 $bundleProduct->setTypeId('bundle')
@@ -210,7 +219,7 @@ if ($bundleProduct->getBundleOptionsData()) {
             $bundleLinks = $bundleProduct->getBundleSelectionsData();
             if (!empty($bundleLinks[$key])) {
                 foreach ($bundleLinks[$key] as $linkData) {
-                    if (!(bool)$linkData['delete']) {
+                    if (!(bool)$linkData['delete']) { // phpcs:ignore
                         /** @var \Magento\Bundle\Api\Data\LinkInterface $link */
                         $link = $objectManager->create(\Magento\Bundle\Api\Data\LinkInterfaceFactory::class)
                             ->create(['data' => $linkData]);
@@ -218,7 +227,7 @@ if ($bundleProduct->getBundleOptionsData()) {
                         $link->setSku($linkProduct->getSku());
                         $link->setQty($linkData['selection_qty']);
                         $link->setPrice($linkData['selection_price_value']);
-                        if (isset($linkData['selection_can_change_qty'])) {
+                        if (isset($linkData['selection_can_change_qty'])) {  // phpcs:ignore
                             $link->setCanChangeQuantity($linkData['selection_can_change_qty']);
                         }
                         $links[] = $link;

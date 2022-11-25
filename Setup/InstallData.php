@@ -22,8 +22,7 @@ class InstallData implements \Magento\Framework\Setup\InstallDataInterface
     public function __construct(
         \Magento\Eav\Setup\EavSetupFactory $eavSetupFactory,
         \Magento\Framework\Setup\ModuleDataSetupInterface $moduleDataSetupInterface
-    )
-    {
+    ) {
         $this->eavSetupFactory = $eavSetupFactory;
         $this->moduleDataSetupInterface = $moduleDataSetupInterface;
 
@@ -33,8 +32,7 @@ class InstallData implements \Magento\Framework\Setup\InstallDataInterface
     public function install(
         \Magento\Framework\Setup\ModuleDataSetupInterface $setup,
         \Magento\Framework\Setup\ModuleContextInterface $context
-    )
-    {
+    ) {
         if (!$this->eavSetup->getAttributeId(\Magento\Catalog\Model\Product::ENTITY, 'daily_deal_price')) {
             $this->eavSetup->addAttribute(
                 \Magento\Catalog\Model\Product::ENTITY,
@@ -145,7 +143,7 @@ class InstallData implements \Magento\Framework\Setup\InstallDataInterface
                     'unique' => false,
                     'label' => 'Enabled',
                     'input' => 'boolean',
-                    'source' => 'Magento\Eav\Model\Entity\Attribute\Source\Boolean',
+                    'source' => \Magento\Eav\Model\Entity\Attribute\Source\Boolean::class,
                     'group' => 'Daily Deal',
                     'required' => false,
                     'sort_order' => 50,

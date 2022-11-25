@@ -17,15 +17,13 @@ class UpdateOfferInCart
     /**
      * @var \Magento\Framework\Message\ManagerInterface
      */
-    private $messageManager;
-
+    protected $messageManager;
 
     public function __construct(
         \MageSuite\DailyDeal\Helper\Configuration $configuration,
         \MageSuite\DailyDeal\Service\OfferManagerInterface $offerManager,
         \Magento\Framework\Message\ManagerInterface $messageManager
-    )
-    {
+    ) {
         $this->configuration = $configuration;
         $this->offerManager = $offerManager;
         $this->messageManager = $messageManager;
@@ -33,7 +31,7 @@ class UpdateOfferInCart
 
     public function beforeUpdateItems(\Magento\Checkout\Model\Cart $subject, $data)
     {
-        if(!$this->configuration->isActive() or !$this->configuration->isQtyLimitationEnabled()){
+        if (!$this->configuration->isActive() || !$this->configuration->isQtyLimitationEnabled()) {
             return [$data];
         }
 
@@ -55,14 +53,14 @@ class UpdateOfferInCart
                 \MageSuite\DailyDeal\Service\OfferManager::ITEM_OPTION_DD_OFFER
             );
 
-            if(!$option or !$option->getValue()){
+            if (!$option || !$option->getValue()) {
                 continue;
             }
 
             $qty = isset($data[$itemId]['qty']) ? (double)$data[$itemId]['qty'] : false;
             $oldQty = $item->getQty();
 
-            if(!$qty or $qty <= $oldQty){
+            if (!$qty || $qty <= $oldQty) {
                 continue;
             }
 
@@ -70,7 +68,7 @@ class UpdateOfferInCart
 
             $offerLimit = $this->offerManager->getOfferLimit($product);
 
-            if($product->getTypeId() != 'simple'){
+            if ($product->getTypeId() != 'simple') {
                 $qtyAmountInCart = $this->offerManager->getProductQtyInCart($product, $item->getQuoteId());
 
                 // We need to decrease quantity by actual product qty
@@ -79,7 +77,7 @@ class UpdateOfferInCart
                 $offerLimit = max(0, $offerLimit - $qtyAmountInCart);
             }
 
-            if($qty <= $offerLimit){
+            if ($qty <= $offerLimit) {
                 continue;
             }
 

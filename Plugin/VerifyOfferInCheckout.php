@@ -22,24 +22,27 @@ class VerifyOfferInCheckout
     /**
      * @var \MageSuite\DailyDeal\Service\OfferManagerInterface
      */
-    private $offerManager;
+    protected $offerManager;
 
     public function __construct(
         \Magento\Quote\Api\CartRepositoryInterface $quoteRepository,
         \Magento\Framework\Message\ManagerInterface $messageManager,
         \MageSuite\DailyDeal\Helper\Configuration $configuration,
         \MageSuite\DailyDeal\Service\OfferManagerInterface $offerManager
-    )
-    {
+    ) {
         $this->quoteRepository = $quoteRepository;
         $this->messageManager = $messageManager;
         $this->configuration = $configuration;
         $this->offerManager = $offerManager;
     }
 
-    public function aroundPlaceOrder($subject, $proceed, $cartId, $paymentMethod = null)
-    {
-        if(!$this->configuration->isActive()){
+    public function aroundPlaceOrder(
+        \Magento\Quote\Api\CartManagementInterface $subject,
+        $proceed,
+        $cartId,
+        $paymentMethod = null
+    ) {
+        if (!$this->configuration->isActive()) {
             return $proceed($cartId, $paymentMethod);
         }
 
@@ -47,7 +50,7 @@ class VerifyOfferInCheckout
 
         $validate = true;
 
-        foreach($quote->getAllItems() as $item){
+        foreach ($quote->getAllItems() as $item) {
             if ($item->getParentItem()) {
                 continue;
             }
@@ -56,18 +59,18 @@ class VerifyOfferInCheckout
                 \MageSuite\DailyDeal\Service\OfferManager::ITEM_OPTION_DD_OFFER
             );
 
-            if(!$option or !$option->getValue()){
+            if (!$option || !$option->getValue()) {
                 continue;
             }
 
             $validate = $this->offerManager->validateOfferInQuote($item->getProduct(), $item->getQty());
 
-            if(!$validate){
+            if (!$validate) {
                 break;
             }
         }
 
-        if(!$validate){
+        if (!$validate) {
 
             $this->offerManager->applyAction(
                 $item->getProduct(),

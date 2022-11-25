@@ -4,44 +4,30 @@ namespace MageSuite\DailyDeal\Observer;
 
 class UpdateProductFinalPrice implements \Magento\Framework\Event\ObserverInterface
 {
-    /**
-     * @var \MageSuite\DailyDeal\Helper\Configuration
-     */
-    protected $configuration;
+    protected \MageSuite\DailyDeal\Helper\Configuration $configuration;
 
-    /**
-     * @var \MageSuite\DailyDeal\Model\OfferPriceIndexer
-     */
-    protected $offerPriceIndexer;
-
-    /**
-     * @var ?/Zend_Db_Expr
-     */
-    protected $entityField;
+    protected bool $finalPriceColumnExists = true;
+    protected \Magento\Framework\EntityManager\MetadataPool $metadataPool;
+    protected \MageSuite\DailyDeal\Model\OfferPriceIndexer $offerPriceIndexer;
 
     /**
      * @var ?/Zend_Db_Expr
      */
     protected $storeField;
 
-    /**
-     * @var bool
-     */
-    protected $finalPriceColumnExists = true;
-
     public function __construct(
         \MageSuite\DailyDeal\Helper\Configuration $configuration,
-        \MageSuite\DailyDeal\Service\OfferManagerInterface $offerManager,
         \Magento\Framework\EntityManager\MetadataPool $metadataPool,
         \MageSuite\DailyDeal\Model\OfferPriceIndexer $offerPriceIndexer
     ) {
         $this->configuration = $configuration;
+        $this->metadataPool = $metadataPool;
         $this->offerPriceIndexer = $offerPriceIndexer;
     }
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        if(!$this->configuration->isActive()){
+        if (!$this->configuration->isActive()) {
             return $this;
         }
 
@@ -53,7 +39,7 @@ class UpdateProductFinalPrice implements \Magento\Framework\Event\ObserverInterf
 
         $finalPrice = $this->getFinalPrice($connection, $select);
 
-        if(!$finalPrice){
+        if (!$finalPrice) {
             return $this;
         }
 
@@ -64,19 +50,18 @@ class UpdateProductFinalPrice implements \Magento\Framework\Event\ObserverInterf
 
     private function applySqlFields($eventData)
     {
-        $this->entityField = $eventData['entity_field'];
         $this->storeField = $eventData['store_field'];
     }
 
     protected function getFinalPrice($connection, $select)
     {
-        $dailyDealColumns = $this->prepareDailyDealColumns($select);
-
         $priceColumn = $this->getPriceColumn($select);
 
-        if(!$priceColumn){
+        if (!$priceColumn) {
             return false;
         }
+
+        $dailyDealColumns = $this->prepareDailyDealColumns($select);
 
         $finalPrice = $connection->getCheckSql(
             "{$dailyDealColumns['is_enabled']} = 1" . " AND {$dailyDealColumns['price']} < {$priceColumn}",
@@ -89,7 +74,12 @@ class UpdateProductFinalPrice implements \Magento\Framework\Event\ObserverInterf
 
     protected function prepareDailyDealColumns($select)
     {
-        $columnExist = $this->ensureColumnExistsInSelect($select, (string)$this->entityField);
+        $linkField = sprintf(
+            'e.%s',
+            $this->metadataPool->getMetadata(\Magento\Catalog\Api\Data\ProductInterface::class)->getLinkField()
+        );
+
+        $columnExist = $this->ensureColumnExistsInSelect($select, 'e.entity_id');
 
         if (!$columnExist) {
             return [];
@@ -98,14 +88,14 @@ class UpdateProductFinalPrice implements \Magento\Framework\Event\ObserverInterf
         $result['price'] = $this->offerPriceIndexer->addAttributeToSelect(
             $select,
             'daily_deal_price',
-            $this->entityField,
+            $linkField,
             $this->storeField
         );
 
         $result['is_enabled'] = $this->offerPriceIndexer->addAttributeToSelect(
             $select,
             'daily_deal_enabled',
-            $this->entityField,
+            $linkField,
             $this->storeField
         );
 
@@ -136,16 +126,16 @@ class UpdateProductFinalPrice implements \Magento\Framework\Event\ObserverInterf
         foreach ($select->getPart(\Magento\Framework\DB\Select::COLUMNS) as $columnEntry) {
             list($correlationName, $column, $alias) = $columnEntry;
 
-            if($alias == 'final_price'){
+            if ($alias == 'final_price') {
                 return $column;
             }
 
-            if($alias == 'price'){
+            if ($alias == 'price') {
                 $priceColumn = $column;
             }
         }
 
-        if($priceColumn){
+        if ($priceColumn) {
             $this->finalPriceColumnExists = false;
         }
 
@@ -158,14 +148,14 @@ class UpdateProductFinalPrice implements \Magento\Framework\Event\ObserverInterf
 
         $columnFields = ['min_price', 'max_price', 'final_price'];
 
-        if(!$this->finalPriceColumnExists){
+        if (!$this->finalPriceColumnExists) {
             $columnFields[] ='price';
         }
 
         foreach ($select->getPart(\Magento\Framework\DB\Select::COLUMNS) as $columnEntry) {
             list($correlationName, $column, $alias) = $columnEntry;
 
-            if(in_array($alias, $columnFields)){
+            if (in_array($alias, $columnFields)) {
                 $column = $connection->getIfNullSql($finalPrice, 0);
             }
 
@@ -173,7 +163,5 @@ class UpdateProductFinalPrice implements \Magento\Framework\Event\ObserverInterf
         }
 
         $select->setPart(\Magento\Framework\DB\Select::COLUMNS, $columns);
-
-        return;
     }
 }

@@ -28,8 +28,7 @@ class DailyDealRefresh extends \Symfony\Component\Console\Command\Command
         \Magento\Framework\Config\ScopeInterface $scope,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \MageSuite\DailyDeal\Service\OfferManagerInterfaceFactory $offerManagerFactory
-    )
-    {
+    ) {
         parent::__construct();
 
         $this->state = $state;
@@ -52,8 +51,7 @@ class DailyDealRefresh extends \Symfony\Component\Console\Command\Command
     protected function execute(
         \Symfony\Component\Console\Input\InputInterface $input,
         \Symfony\Component\Console\Output\OutputInterface $output
-    )
-    {
+    ) {
         if ($this->scope->getCurrentScope() !== 'frontend') {
             $this->state->setAreaCode('frontend');
         }
@@ -69,7 +67,7 @@ class DailyDealRefresh extends \Symfony\Component\Console\Command\Command
 
         $offerManager = $this->offerManagerFactory->create();
 
-        foreach($storeIds as $storeId){
+        foreach ($storeIds as $storeId) {
             $offerManager->refreshOffers($storeId);
         }
     }

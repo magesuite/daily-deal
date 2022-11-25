@@ -16,7 +16,7 @@ class DisableReorderingOffer
 
     public function aroundAddOrderItem(\Magento\Checkout\Model\Cart $subject, callable $proceed, $orderItem, $qtyFlag = null)
     {
-        if(!$this->configuration->isActive()){
+        if (!$this->configuration->isActive()) {
             return $proceed($orderItem, $qtyFlag);
         }
 
@@ -24,7 +24,7 @@ class DisableReorderingOffer
 
         $offerKey = \MageSuite\DailyDeal\Service\OfferManager::ITEM_OPTION_DD_OFFER;
 
-        if(isset($buyRequest[$offerKey]) and $buyRequest[$offerKey]) {
+        if (isset($buyRequest[$offerKey]) && $buyRequest[$offerKey]) {
             return $subject;
         }
 

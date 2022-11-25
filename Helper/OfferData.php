@@ -42,8 +42,7 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Catalog\Block\Product\View $productView,
         \MageSuite\Discount\Helper\Discount $discountHelper,
         \MageSuite\DailyDeal\Service\SalableStockResolver $salableStockResolver
-    )
-    {
+    ) {
         parent::__construct($context);
 
         $this->configuration = $configuration;
@@ -124,7 +123,6 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         if ($this->salableStockResolver->execute($product->getSku()) < 0) {
             return false;
         }
-
 
         $offerTo = $product->getDailyDealTo();
 

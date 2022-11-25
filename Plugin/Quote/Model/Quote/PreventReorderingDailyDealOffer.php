@@ -32,8 +32,7 @@ class PreventReorderingDailyDealOffer
     public function __construct(
         \MageSuite\DailyDeal\Helper\Configuration $configuration,
         \Magento\Framework\App\RequestInterface $request
-    )
-    {
+    ) {
         $this->configuration = $configuration;
         $this->request = $request;
     }
@@ -51,8 +50,7 @@ class PreventReorderingDailyDealOffer
         \Magento\Catalog\Model\Product $product,
         $request = null,
         $processMode = \Magento\Catalog\Model\Product\Type\AbstractType::PROCESS_MODE_FULL
-    )
-    {
+    ) {
         if (!$this->configuration->isActive()) {
             return $proceed($product, $request, $processMode);
         }

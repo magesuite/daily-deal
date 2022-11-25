@@ -40,8 +40,7 @@ class DailyDealRefresh
         \MageSuite\DailyDeal\Helper\Configuration $configuration,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \MageSuite\DailyDeal\Service\OfferManagerInterface $offerManager
-    )
-    {
+    ) {
         $this->cache = $cache;
         $this->eventManager = $eventManager;
         $this->cacheContext = $cacheContext;

@@ -31,7 +31,7 @@ class Datetime extends \Magento\Catalog\Ui\DataProvider\Product\Form\Modifier\Ab
     {
         $fields = ['daily_deal_from', 'daily_deal_to'];
 
-        foreach($fields as $field){
+        foreach ($fields as $field) {
 
             $elementPath = $this->arrayManager->findPath($field, $meta, null, 'children');
             $containerPath = $this->arrayManager->findPath(self::CONTAINER_PREFIX . $field, $meta, null, 'children');

@@ -31,7 +31,7 @@ class FinalPriceWithoutDailyDeal extends \Magento\Framework\Pricing\Price\Abstra
     {
         $value = $this->getFinalPriceWithoutDailyDeal();
 
-        if(!$value){
+        if (!$value) {
             return false;
         }
 
@@ -44,7 +44,7 @@ class FinalPriceWithoutDailyDeal extends \Magento\Framework\Pricing\Price\Abstra
             $this->value = false;
             foreach ($this->priceInfo->getPrices() as $price) {
 
-                if($this->isExcludedClass($price)){
+                if ($this->isExcludedClass($price)) {
                     continue;
                 }
 

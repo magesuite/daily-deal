@@ -30,7 +30,7 @@ class DisableField extends \Magento\Catalog\Ui\DataProvider\Product\Form\Modifie
 
         $elementPath = $this->arrayManager->findPath($field, $meta, null, 'children');
 
-        if(!$elementPath){
+        if (!$elementPath) {
             return $meta;
         }
 

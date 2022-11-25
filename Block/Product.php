@@ -7,7 +7,7 @@ class Product extends \Magento\Framework\View\Element\Template
     const CACHE_LIFETIME = 86400;
     const CACHE_TAG = 'daily_deal_product_%s_%s';
 
-    protected $_template = 'MageSuite_DailyDeal::product.phtml';
+    protected $_template = 'MageSuite_DailyDeal::product.phtml'; // phpcs:ignore
 
     /**
      * @var \Magento\Framework\Registry

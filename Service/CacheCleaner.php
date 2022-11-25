@@ -38,7 +38,7 @@ class CacheCleaner
 
     public function refreshProductCache($product)
     {
-        if(!$product){
+        if (!$product) {
             return false;
         }
 

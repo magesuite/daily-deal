@@ -4,7 +4,7 @@ namespace MageSuite\DailyDeal\Helper;
 
 class Configuration extends \Magento\Framework\App\Helper\AbstractHelper
 {
-    private $config;
+    protected $config;
 
     /**
      * @var \Magento\Framework\App\Config\ScopeConfigInterface
@@ -31,7 +31,7 @@ class Configuration extends \Magento\Framework\App\Helper\AbstractHelper
     {
         $config = $this->getConfig();
 
-        return ($config['active'] and $config['use_qty_limitation']) ? true : false;
+        return ($config['active'] && $config['use_qty_limitation']) ? true : false;
     }
 
     public function displayOnTile()
@@ -43,7 +43,7 @@ class Configuration extends \Magento\Framework\App\Helper\AbstractHelper
 
     private function getConfig()
     {
-        if(!$this->config){
+        if (!$this->config) {
             $this->config = $this->scopeConfig->getValue('daily_deal/general', \Magento\Store\Model\ScopeInterface::SCOPE_STORE);
         }
 

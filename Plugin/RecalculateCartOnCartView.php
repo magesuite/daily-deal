@@ -11,13 +11,12 @@ class RecalculateCartOnCartView
     /**
      * @var \Magento\Checkout\Model\Cart
      */
-    private $cart;
+    protected $cart;
 
     public function __construct(
         \Magento\Checkout\Model\Cart $cart,
         \MageSuite\DailyDeal\Helper\Configuration $configuration
-    )
-    {
+    ) {
         $this->cart = $cart;
         $this->configuration = $configuration;
     }
@@ -29,7 +28,7 @@ class RecalculateCartOnCartView
      */
     public function beforeExecute(\Magento\Checkout\Controller\Cart\Index $subject)
     {
-        if(!$this->configuration->isActive()){
+        if (!$this->configuration->isActive()) {
             return null;
         }
 

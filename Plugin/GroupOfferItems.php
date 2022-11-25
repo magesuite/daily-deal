@@ -17,15 +17,13 @@ class GroupOfferItems
     /**
      * @var \Magento\Framework\Serialize\SerializerInterface
      */
-    private $serializer;
-
+    protected $serializer;
 
     public function __construct(
         \MageSuite\DailyDeal\Helper\Configuration $configuration,
         \MageSuite\DailyDeal\Service\OfferManagerInterface $offerManager,
         \Magento\Framework\Serialize\SerializerInterface $serializer
-    )
-    {
+    ) {
         $this->configuration = $configuration;
         $this->offerManager = $offerManager;
         $this->serializer = $serializer;
@@ -33,15 +31,15 @@ class GroupOfferItems
 
     public function aroundRepresentProduct(\Magento\Quote\Model\Quote\Item $subject, callable $proceed, $product)
     {
-        if(!$this->configuration->isActive()){
+        if (!$this->configuration->isActive()) {
             return $proceed($product);
         }
 
-        if($subject->getProductId() != $product->getId()){
+        if ($subject->getProductId() != $product->getId()) {
             return $proceed($product);
         }
 
-        if(!$this->offerManager->getOfferPrice($product)){
+        if (!$this->offerManager->getOfferPrice($product)) {
             return $proceed($product);
         }
 
@@ -49,10 +47,10 @@ class GroupOfferItems
 
         $offerItemOption = $product->getCustomOption($customOption);
 
-        if($offerItemOption){
+        if ($offerItemOption) {
             $itemOption = $subject->getOptionByCode($customOption);
 
-            if(!$itemOption){
+            if (!$itemOption) {
                 return $proceed($product);
             }
 
@@ -66,5 +64,4 @@ class GroupOfferItems
 
         return $proceed($product);
     }
-
 }

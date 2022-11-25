@@ -9,7 +9,7 @@ class OfferPriceIndexer extends \Magento\Catalog\Model\ResourceModel\Product\Ind
         $this->_init('catalog_product_index_price', 'entity_id');
     }
 
-    public function addAttributeToSelect($select, $attrCode, $entity, $store)
+    public function addAttributeToSelect($select, $attrCode, $entity, $store) // phpcs:ignore
     {
         return $this->_addAttributeToSelect(
             $select,
@@ -23,5 +23,4 @@ class OfferPriceIndexer extends \Magento\Catalog\Model\ResourceModel\Product\Ind
     {
         return $this->_getAttribute($attributeCode);
     }
-
 }

@@ -6,7 +6,7 @@ class Offer extends \Magento\Catalog\Model\ResourceModel\AbstractResource
 {
     const DEFAULT_STORE_ID = 0;
 
-    private $attributes = [];
+    protected $attributes = [];
 
     /**
      * @var \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory
@@ -33,8 +33,7 @@ class Offer extends \Magento\Catalog\Model\ResourceModel\AbstractResource
         \Magento\Framework\App\ResourceConnection $resource,
         \Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable $configurableModel,
         \Magento\Catalog\Model\ProductRepository $productRepository
-    )
-    {
+    ) {
         $this->productCollectionFactory = $productCollectionFactory;
         $this->resource = $resource;
         $this->configurableModel = $configurableModel;
@@ -106,7 +105,7 @@ class Offer extends \Magento\Catalog\Model\ResourceModel\AbstractResource
     {
         $productIds = $this->configurableModel->getParentIdsByChild($product->getId());
 
-        if(empty($productIds)){
+        if (empty($productIds)) {
             return false;
         }
 
@@ -128,17 +127,16 @@ class Offer extends \Magento\Catalog\Model\ResourceModel\AbstractResource
 
         $result = $this->resource->getConnection()->fetchCol($select);
 
-        if(empty($result)){
+        if (empty($result)) {
             return 0;
         }
 
         $productQty = 0;
-        foreach($result as $itemQty){
+
+        foreach ($result as $itemQty) {
             $productQty += $itemQty;
         }
 
         return $productQty;
     }
-
-
 }

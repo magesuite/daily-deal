@@ -31,14 +31,14 @@ class DailyDealPriceContainerMix
 
         $nameInLayout = $subject->getNameInLayout();
 
-        if (($nameInLayout == 'product.tile.price.wrapper.grid' || $nameInLayout == 'product.tile.price.wrapper.list') and $key == 'css_class') {
+        if (($nameInLayout == 'product.tile.price.wrapper.grid' || $nameInLayout == 'product.tile.price.wrapper.list') && $key == 'css_class') {
             $product = $subject->getProduct();
 
             if (!$product) {
                 return $result;
             }
 
-            if(!$this->offerDataHelper->isOfferEnabled($product)) {
+            if (!$this->offerDataHelper->isOfferEnabled($product)) {
                 return $result;
             }
 

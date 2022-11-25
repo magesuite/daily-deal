@@ -49,7 +49,7 @@ class OfferManagerTest extends \PHPUnit\Framework\TestCase
         $offers = $this->offerManager->getOffers();
 
         $offersArray = [];
-        foreach($offers as $offer){
+        foreach ($offers as $offer) {
             $offersArray[] = $offer;
         }
 
@@ -81,9 +81,9 @@ class OfferManagerTest extends \PHPUnit\Framework\TestCase
         $this->offerManager->setStoreId($storeId);
 
         $offers = $this->offerManager->getOffers();
-
         $offersArray = [];
-        foreach($offers as $offer){
+
+        foreach ($offers as $offer) {
             $offersArray[] = $offer;
         }
 
@@ -91,12 +91,13 @@ class OfferManagerTest extends \PHPUnit\Framework\TestCase
 
         $this->assertEquals(
             \MageSuite\DailyDeal\Service\OfferManager::TYPE_REMOVE,
-            $this->offerManager->getOfferAction($offersArray[1], $qtyLimitation, $storeId));
+            $this->offerManager->getOfferAction($offersArray[1], $qtyLimitation, $storeId)
+        );
 
         $this->assertEquals(
             \MageSuite\DailyDeal\Service\OfferManager::TYPE_ADD,
-            $this->offerManager->getOfferAction($offersArray[2], $qtyLimitation, $storeId));
-
+            $this->offerManager->getOfferAction($offersArray[2], $qtyLimitation, $storeId)
+        );
 
         $this->assertEquals(1, $offersArray[1]->getDailyDealEnabled());
 
@@ -104,7 +105,6 @@ class OfferManagerTest extends \PHPUnit\Framework\TestCase
         $product = $this->productRepository->get($offersArray[1]->getSku());
 
         $this->assertEquals(0, $product->getDailyDealEnabled());
-
 
         $this->assertEquals(0, $offersArray[2]->getDailyDealEnabled());
 

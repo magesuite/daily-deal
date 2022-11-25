@@ -2,11 +2,11 @@
 /** @var \MageSuite\DailyDeal\Helper\OfferData $dailyDealHelper */
 /** @var $block \MageSuite\DailyDeal\Block\Product */
 $product = $block->getProduct();
-$dailyDealHelper = $this->helper('MageSuite\DailyDeal\Helper\OfferData');
+$dailyDealHelper = $this->helper(\MageSuite\DailyDeal\Helper\OfferData::class); // phpcs:ignore
 $dailyDealCounterPlace = $block->getCounterPlace() ? $block->getCounterPlace() : 'pdp';
 ?>
 <?php
-if ($dailyDealHelper->isOfferEnabled($product)):
+if ($dailyDealHelper->isOfferEnabled($product)) :
     $dailyDealData = $dailyDealHelper->prepareOfferData($product);
     if ($product->getIsSalable() && $dailyDealHelper->isDailyDealCounterApplicable($dailyDealData, $dailyDealCounterPlace)):
         $headerLabel = $block->getItemsLeftLabel();

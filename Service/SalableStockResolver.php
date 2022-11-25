@@ -60,7 +60,7 @@ class SalableStockResolver
             }
 
             return $this->productQuantityCache[$stockId][$productSku];
-        } catch (\Magento\Framework\Exception\NoSuchEntityException
+        } catch (\Magento\Framework\Exception\NoSuchEntityException // phpcs:ignore
         | \Magento\Framework\Exception\InputException
         | \Magento\Framework\Exception\LocalizedException $e) {
             // do nothing

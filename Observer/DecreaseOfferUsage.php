@@ -24,19 +24,19 @@ class DecreaseOfferUsage implements \Magento\Framework\Event\ObserverInterface
 
     public function execute(\Magento\Framework\Event\Observer $observer)
     {
-        if(!$this->configuration->isActive()){
+        if (!$this->configuration->isActive()) {
             return $this;
         }
 
         $isQtyLimitationEnabled = $this->configuration->isQtyLimitationEnabled();
 
-        if(!$isQtyLimitationEnabled){
+        if (!$isQtyLimitationEnabled) {
             return $this;
         }
 
         $order = $observer->getEvent()->getOrder();
 
-        foreach($order->getAllItems() as $item){
+        foreach ($order->getAllItems() as $item) {
             if ($item->getParentItem()) {
                 continue;
             }
@@ -44,7 +44,7 @@ class DecreaseOfferUsage implements \Magento\Framework\Event\ObserverInterface
             $buyRequest = $item->getProductOptionByCode('info_buyRequest');
             $offerKey = \MageSuite\DailyDeal\Service\OfferManager::ITEM_OPTION_DD_OFFER;
 
-            if(!isset($buyRequest[$offerKey]) or !$buyRequest[$offerKey]) {
+            if (!isset($buyRequest[$offerKey]) || !$buyRequest[$offerKey]) {
                 continue;
             }
 

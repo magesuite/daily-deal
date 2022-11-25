@@ -9,9 +9,9 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
     const TYPE_ADD = 1;
     const TYPE_REMOVE = 0;
 
-    private $timestamp;
-    private $storeId;
-    private $productsQuantities = [];
+    protected $timestamp;
+    protected $storeId;
+    protected $productsQuantities = [];
 
     /**
      * @var \Magento\Quote\Api\CartRepositoryInterface
@@ -107,7 +107,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
         $this->getProductsQuantities($offers);
         $isQtyLimitationEnabled = $this->configuration->isQtyLimitationEnabled();
 
-        foreach($offers as $offer){
+        foreach ($offers as $offer) {
             $action = $this->getOfferAction($offer, $isQtyLimitationEnabled, $storeId);
 
             if ($action === null) {
@@ -138,44 +138,49 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
         $to = $offerData['daily_deal_to'] ? strtotime($offerData['daily_deal_to']) : null;
 
         $productQty = null;
-        if($offer->getTypeId() == \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE && isset($this->productsQuantities[$offerData['entity_id']])){
+        if ($offer->getTypeId() == \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE && isset($this->productsQuantities[$offerData['entity_id']])) {
             $productQty = $this->productsQuantities[$offerData['entity_id']];
         }
 
-        if($offerData['daily_deal_enabled']){
+        if ($offerData['daily_deal_enabled']) {
 
             // $productQty should be checked only for frontend stores, it doesn't make sense to check it for admin store
-            if($storeId != \Magento\Store\Model\Store::DEFAULT_STORE_ID && $productQty !== null && $productQty < 1){
+            if ($storeId != \Magento\Store\Model\Store::DEFAULT_STORE_ID && $productQty !== null && $productQty < 1) {
                 return self::TYPE_REMOVE;
             }
 
-            if(!$from || !$to){
+            if (!$from || !$to) {
                 return self::TYPE_REMOVE;
             }
 
-            if($from > $this->timestamp || $to < $this->timestamp){
+            if ($from > $this->timestamp || $to < $this->timestamp) {
                 return self::TYPE_REMOVE;
             }
 
-            if($isQtyLimitationEnabled && isset($offerData['daily_deal_limit']) && $offerData['daily_deal_limit'] !== null && (float)$offerData['daily_deal_limit'] == 0){
+            if ($isQtyLimitationEnabled && isset($offerData['daily_deal_limit']) // phpcs:ignore
+                && $offerData['daily_deal_limit'] !== null
+                && (float)$offerData['daily_deal_limit'] == 0) {
                 return self::TYPE_REMOVE;
             }
 
-        }else{
+        } else {
 
-            if($productQty !== null && $productQty < 1){
+            if ($productQty !== null && $productQty < 1) {
                 return null;
             }
 
-            if(!$from || !$to){
+            if (!$from || !$to) {
                 return null;
             }
 
-            if($isQtyLimitationEnabled && isset($offerData['daily_deal_limit']) && $offerData['daily_deal_limit'] !== null && (float)$offerData['daily_deal_limit'] == 0){
+            if ($isQtyLimitationEnabled // phpcs:ignore
+                && isset($offerData['daily_deal_limit'])
+                && $offerData['daily_deal_limit'] !== null
+                && (float)$offerData['daily_deal_limit'] == 0) {
                 return null;
             }
 
-            if($from < $this->timestamp && $to > $this->timestamp){
+            if ($from < $this->timestamp && $to > $this->timestamp) {
                 return self::TYPE_ADD;
             }
         }
@@ -187,7 +192,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
     {
         $product->setDailyDealEnabled($action);
 
-        if($product->getExistsStoreValueFlag('daily_deal_enabled')){
+        if ($product->getExistsStoreValueFlag('daily_deal_enabled')) {
             $product->getResource()->saveAttribute($product, 'daily_deal_enabled');
         }
 
@@ -199,7 +204,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
             \Magento\Store\Model\Store::DEFAULT_STORE_ID
         );
 
-        if($action == self::TYPE_REMOVE){
+        if ($action == self::TYPE_REMOVE) {
             $this->removeProductFromQuotes($product);
         }
 
@@ -211,15 +216,15 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
     {
         $items = $this->offerResource->getItemsByProductId($product->getId());
 
-        if(empty($items)){
+        if (empty($items)) {
             return true;
         }
 
-        foreach($items as $quoteId => $item){
+        foreach ($items as $quoteId => $item) {
             $quote = $this->quoteRepository->get($quoteId);
 
-            foreach($quote->getItems() as $quoteItem){
-                if($quoteItem->getId() != $item['item_id']){
+            foreach ($quote->getItems() as $quoteItem) {
+                if ($quoteItem->getId() != $item['item_id']) {
                     continue;
                 }
 
@@ -237,7 +242,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
     {
         $indexes = ['catalogsearch_fulltext', 'catalog_product_price'];
 
-        foreach($indexes as $indexId) {
+        foreach ($indexes as $indexId) {
             /** @var \Magento\Indexer\Model\Indexer $indexer */
             $indexer = $this->indexerFactory->create();
             $indexer->load($indexId);
@@ -254,7 +259,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
     {
         $this->setStoreId(null);
 
-        if(!$this->offerData->isOfferEnabled($product)){
+        if (!$this->offerData->isOfferEnabled($product)) {
             return null;
         }
 
@@ -263,7 +268,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
 
     public function getOfferLimit($product)
     {
-        if(!$this->offerData->isOfferEnabled($product)){
+        if (!$this->offerData->isOfferEnabled($product)) {
             return null;
         }
 
@@ -282,17 +287,17 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
 
     public function validateOfferInQuote($product, $qty)
     {
-        if(!$qty){
+        if (!$qty) {
             return false;
         }
 
-        if(!$this->offerData->isOfferEnabled($product)){
+        if (!$this->offerData->isOfferEnabled($product)) {
             return false;
         }
 
         $isQtyLimitationEnabled = $this->configuration->isQtyLimitationEnabled();
 
-        if(!$isQtyLimitationEnabled){
+        if (!$isQtyLimitationEnabled) {
             return true;
         }
 
@@ -308,11 +313,11 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
      */
     public function decreaseOfferLimit($product, $qty = null)
     {
-        if(!$this->offerData->isOfferEnabled($product)){
+        if (!$this->offerData->isOfferEnabled($product)) {
             return true;
         }
 
-        if(!$this->configuration->isQtyLimitationEnabled()){
+        if (!$this->configuration->isQtyLimitationEnabled()) {
             return true;
         }
 
@@ -324,7 +329,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
 
         $product->setDailyDealLimit($newValue);
 
-        if($product->getExistsStoreValueFlag('daily_deal_limit')){
+        if ($product->getExistsStoreValueFlag('daily_deal_limit')) {
             $product->getResource()->saveAttribute($product, 'daily_deal_limit');
         }
 
@@ -336,7 +341,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
             \Magento\Store\Model\Store::DEFAULT_STORE_ID
         );
 
-        if($newValue == 0){
+        if ($newValue == 0) {
             $this->applyAction($product, self::TYPE_REMOVE);
         }
 
