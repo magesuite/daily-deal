@@ -80,9 +80,9 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         $result = [
             'deal' => $this->isOfferEnabled($product),
             'items' => $isQtyLimitationEnabled ? ($this->getOfferLimit($product) > $salableQty ? $salableQty : $this->getOfferLimit($product)) : 0,
-            'from' => strtotime($product->getDailyDealFrom()),
+            'from' => $product->getDailyDealFrom() === null ? null : strtotime($product->getDailyDealFrom()),
             'initialAmount' => $product->getDailyDealInitialAmount(),
-            'to' => strtotime($product->getDailyDealTo()),
+            'to' => $product->getDailyDealTo() === null ? null : strtotime($product->getDailyDealTo()),
             'price' => $product->getDailyDealPrice(),
             'displayType' => $this->displayOnTile()
         ];
@@ -125,6 +125,10 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         $offerTo = $product->getDailyDealTo();
+
+        if($offerTo === null) {
+            return true;
+        }
 
         return $this->dateTime->gmtTimestamp() < strtotime($offerTo);
     }

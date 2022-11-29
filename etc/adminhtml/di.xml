@@ -9,7 +9,7 @@
                     <item name="sortOrder" xsi:type="number">100</item>
                 </item>
                 <item name="daily_deal_enabled" xsi:type="array">
-                    <item name="class" xsi:type="string">\MageSuite\DailyDeal\Ui\DataProvider\Product\Form\Modifier\ReadOnly</item>
+                    <item name="class" xsi:type="string">\MageSuite\DailyDeal\Ui\DataProvider\Product\Form\Modifier\DisableField</item>
                     <item name="sortOrder" xsi:type="number">100</item>
                 </item>
             </argument>
