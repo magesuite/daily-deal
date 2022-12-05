@@ -8,12 +8,12 @@ namespace MageSuite\DailyDeal\Test\Integration\DailyDeal;
  */
 class OfferTest extends \PHPUnit\Framework\TestCase
 {
-    protected ?\Magento\Checkout\Model\Cart $cart;
-    protected ?\Magento\Framework\ObjectManagerInterface $objectManager;
-    protected ?\MageSuite\DailyDeal\Service\OfferManager $offerManager;
-    protected ?\MageSuite\DailyDeal\Model\ResourceModel\Offer $offerResource;
-    protected ?\Magento\Catalog\Api\ProductRepositoryInterface $productRepository;
-    protected ?\Magento\Quote\Model\QuoteManagement $quoteManagement;
+    protected ?\Magento\Checkout\Model\Cart $cart = null;
+    protected ?\Magento\Framework\ObjectManagerInterface $objectManager = null;
+    protected ?\MageSuite\DailyDeal\Service\OfferManager $offerManager = null;
+    protected ?\MageSuite\DailyDeal\Model\ResourceModel\Offer $offerResource = null;
+    protected ?\Magento\Catalog\Api\ProductRepositoryInterface $productRepository = null;
+    protected ?\Magento\Quote\Model\QuoteManagement $quoteManagement = null;
 
     public function setUp(): void
     {
@@ -171,7 +171,6 @@ class OfferTest extends \PHPUnit\Framework\TestCase
      */
     public function testItLimitProductQtyInCart(): void
     {
-        $this->markTestSkipped();
         $storeId = 1;
 
         $product = $this->productRepository->get('actual_offer');

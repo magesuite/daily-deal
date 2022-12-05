@@ -47,6 +47,13 @@
                     <ticket_id>MGP-1060</ticket_id>
                 </entry>
             </tag>
+            <tag version="v2.2.1" date="2022-12-05">
+                <entry>
+                    <type>REFACTOR</type>
+                    <overview>Compatibility with Magento v2.4.5.</overview>
+                    <ticket_id>MGP-1060</ticket_id>
+                </entry>
+            </tag>
         </changelog>
     </module>
 </config>
