@@ -4,20 +4,19 @@ namespace MageSuite\DailyDeal\Service;
 
 class DailyDealApplier
 {
-    protected \Magento\Checkout\Model\Cart $cart;
     protected \MageSuite\DailyDeal\Helper\Configuration $configuration;
     protected \MageSuite\DailyDeal\Service\OfferManagerInterface $offerManager;
     protected \Magento\Framework\Controller\ResultFactory $resultFactory;
     protected \Magento\Framework\Serialize\SerializerInterface $serializer;
 
+    protected int $qtyLeft = 0;
+
     public function __construct(
-        \Magento\Checkout\Model\Cart $cart,
         \MageSuite\DailyDeal\Helper\Configuration $configuration,
         \MageSuite\DailyDeal\Service\OfferManagerInterface $offerManager,
         \Magento\Framework\Controller\ResultFactory $resultFactory,
         \Magento\Framework\Serialize\SerializerInterface $serializer
     ) {
-        $this->cart = $cart;
         $this->configuration = $configuration;
         $this->offerManager = $offerManager;
         $this->resultFactory = $resultFactory;
@@ -26,9 +25,10 @@ class DailyDealApplier
 
     public function apply(
         \Magento\Quote\Api\Data\CartItemInterface $item
-    ): bool {
+    ): ?bool {
+
         if (!$this->configuration->isActive()) {
-            return false;
+            throw new \Magento\Framework\Exception\ValidatorException(__('Daily Deal is disabled in store configuration.'));
         }
 
         $isDailyDealCustomOption = $item->getProduct()->getCustomOption(\MageSuite\DailyDeal\Service\OfferManager::ITEM_OPTION_DD_OFFER);
@@ -42,7 +42,7 @@ class DailyDealApplier
         $offerPrice = $this->offerManager->getOfferPrice($product);
 
         if (empty($offerPrice)) {
-            return false;
+            throw new \Magento\Framework\Exception\ValidatorException(__('Offer Price has not been found.'));
         }
 
         $finalPrice = $product->getFinalPrice();
@@ -57,7 +57,7 @@ class DailyDealApplier
 
         $qty = $item->getQty();
 
-        if ($product->getTypeId() != \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE) {
+        if ($product->getTypeId() !== \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE) {
 
             // For configurable items we need to check amount of products currently in the cart
             $qtyAmountInCart = $this->offerManager->getProductQtyInCart($product, $item->getQuoteId());
@@ -70,7 +70,7 @@ class DailyDealApplier
         }
 
         if (!$offerLimit) {
-            throw new \Magento\Framework\Exception\ValidatorException(
+            throw new \Magento\Framework\Exception\InvalidArgumentException(
                 __('Requested amount of %1 isn\'t available.', $product->getName())
             );
         }
@@ -84,17 +84,14 @@ class DailyDealApplier
         $item->setQty($offerLimit);
         $this->updateProductPrice($item, $offerPrice);
 
-        $qtyLeft = $qty - $offerLimit;
+        $this->qtyLeft = $qty - $offerLimit;
 
-        $this->addRegularItem($product, $qtyLeft);
+        return false;
+    }
 
-        throw new \Magento\Framework\Exception\ValidatorException(
-            __(
-                'Requested amount of %1 in special price isn\'t available. %2 item(s) have been added with regular price.',
-                $product->getName(),
-                $qtyLeft
-            )
-        );
+    public function getQtyLeft(): int
+    {
+        return $this->qtyLeft;
     }
 
     protected function updateProductPrice(
@@ -128,10 +125,18 @@ class DailyDealApplier
         $item->getProduct()->setIsSuperMode(true);
     }
 
-    protected function addRegularItem(
+    public function addRegularItem(
         \Magento\Catalog\Api\Data\ProductInterface $product,
-        int $qty
+        $quote,
+        $qty = null
     ): void {
+
+        $qty ??= $this->getQtyLeft();
+
+        if (empty($qty)){
+            return;
+        }
+
         $request = new \Magento\Framework\DataObject(['qty' => $qty]);
 
         $product->addCustomOption(
@@ -140,7 +145,7 @@ class DailyDealApplier
         );
 
         try {
-            $this->cart->getQuote()->addProduct($product, $request);
+            $quote->addProduct($product, $request);
         } catch (\Magento\Framework\Exception\LocalizedException $e) {} // phpcs:ignore
     }
 }
