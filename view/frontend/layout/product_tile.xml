@@ -33,6 +33,24 @@
                     <argument xsi:type="string" name="modifier_for_qty_limitation">cs-dailydeal--has-qty-limit</argument>
                     <argument xsi:type="boolean" name="show_header">true</argument>
                     <argument xsi:type="string" translate="true" name="availability_text_after">items left</argument>
+                    <argument name="unsupported_areas" xsi:type="array">
+                        <item name="0" xsi:type="string">teaser</item>
+                    </argument>
+                </arguments>
+            </block>
+        </referenceBlock>
+
+        <referenceBlock class="MageSuite\ProductTile\Block\Tile\Container" name="product.tile.container.main.details">
+            <block class="MageSuite\ProductTile\Block\Tile\Fragment" name="product.tile.teaser.dailydeal.counter" template="MageSuite_DailyDeal::counter.phtml" after="product.tile.container.badges">
+                <arguments>
+                    <argument xsi:type="string" name="counter_place">tile</argument>
+                    <argument xsi:type="string" name="additional_css_classes">cs-product-tile__dailydeal cs-dailydeal--tile-teaser</argument>
+                    <argument xsi:type="string" name="modifier_for_qty_limitation">cs-dailydeal--has-qty-limit</argument>
+                    <argument xsi:type="boolean" name="show_header">true</argument>
+                    <argument xsi:type="string" translate="true" name="availability_text_after">items left</argument>
+                    <argument name="supported_areas" xsi:type="array">
+                        <item name="0" xsi:type="string">teaser</item>
+                    </argument>
                 </arguments>
             </block>
         </referenceBlock>
