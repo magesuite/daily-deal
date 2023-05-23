@@ -70,5 +70,7 @@ class DailyDealRefresh extends \Symfony\Component\Console\Command\Command
         foreach ($storeIds as $storeId) {
             $offerManager->refreshOffers($storeId);
         }
+
+        return \Magento\Framework\Console\Cli::RETURN_SUCCESS;
     }
 }
