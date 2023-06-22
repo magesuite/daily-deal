@@ -303,7 +303,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
 
         $limit = $product->getDailyDealLimit();
 
-        return (float)$qty <= (float)$limit ? true : false;
+        return $limit === null || (float)$qty <= (float)$limit;
     }
 
     /**
@@ -321,9 +321,13 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
             return true;
         }
 
-        $qty = $qty ? $qty : 1;
-
         $currentValue = $product->getDailyDealLimit();
+
+        if ($currentValue === null) {
+            return true;
+        }
+
+        $qty = $qty ? $qty : 1;
 
         $newValue = max(0, $currentValue - $qty);
 
