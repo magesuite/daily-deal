@@ -3,8 +3,10 @@
 namespace MageSuite\DailyDeal\Test\Integration\Service;
 
 /**
- * @magentoDbIsolation enabled
+ * @magentoAppArea frontend
  * @magentoAppIsolation enabled
+ * @magentoDbIsolation enabled
+ * @magentoDataFixture loadProducts
  */
 class OfferManagerTest extends \PHPUnit\Framework\TestCase
 {
@@ -37,10 +39,6 @@ class OfferManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoAppArea frontend
-     * @magentoAppIsolation enabled
-     * @magentoDbIsolation enabled
-     * @magentoDataFixture loadProducts
      * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
      */
@@ -64,10 +62,6 @@ class OfferManagerTest extends \PHPUnit\Framework\TestCase
     }
 
     /**
-     * @magentoAppArea frontend
-     * @magentoAppIsolation enabled
-     * @magentoDbIsolation enabled
-     * @magentoDataFixture loadProducts
      * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
      */
@@ -112,6 +106,22 @@ class OfferManagerTest extends \PHPUnit\Framework\TestCase
         $product = $this->productRepository->get($offersArray[2]->getSku());
 
         $this->assertEquals(1, $product->getDailyDealEnabled());
+    }
+
+    /**
+     * @magentoConfigFixture current_store daily_deal/general/active 1
+     * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
+     */
+    public function testItCorrectlyValidatesOfferWithAndWithoutLimit()
+    {
+        $product = $this->productRepository->get('active_offer');
+        $this->assertTrue($this->offerManager->validateOfferInQuote($product, 10));
+
+        $product->setDailyDealLimit(null);
+        $this->assertTrue($this->offerManager->validateOfferInQuote($product, 10));
+
+        $product->setDailyDealLimit(0);
+        $this->assertFalse($this->offerManager->validateOfferInQuote($product, 10));
     }
 
     public static function loadProducts()
