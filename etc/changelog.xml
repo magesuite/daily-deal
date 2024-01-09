@@ -5,53 +5,60 @@
         description="This module provide daily deal functionality."
         url="https://github.com/magesuite/daily-deal">
         <changelog>
-            <tag version="v2.1.1" date="2022-09-30">
+            <tag version="2.1.1" date="2022-09-30">
                 <entry>
                     <type>FIX</type>
                     <overview>Fix the checkout price of the related product that is the daily deal</overview>
                     <ticket_id>HAKA-1602</ticket_id>
                 </entry>
             </tag>
-            <tag version="v2.1.2" date="2022-09-08">
+            <tag version="2.1.2" date="2022-09-08">
                 <entry>
                     <type>FIX</type>
                     <overview>Fix for indexing daily deal prices in Magento Commerce.</overview>
                     <ticket_id>DOG-1351</ticket_id>
                 </entry>
             </tag>
-            <tag version="v2.1.6" date="2022-09-28">
+            <tag version="2.1.6" date="2022-09-28">
                 <entry>
                     <type>FIX</type>
                     <overview>Fix for adding offer to the cart if limit offer is enabled but not set.</overview>
                     <ticket_id>MGS-4547</ticket_id>
                 </entry>
             </tag>
-            <tag version="v2.1.7" date="2022-10-11">
+            <tag version="2.1.7" date="2022-10-11">
                 <entry>
                     <type>FIX</type>
                     <overview>Revoke the changes fixing related products special price</overview>
                     <ticket_id>HAKA-1602</ticket_id>
                 </entry>
             </tag>
-            <tag version="v2.1.8" date="2022-11-15">
+            <tag version="2.1.8" date="2022-11-15">
                 <entry>
                     <type>FIX</type>
                     <overview>Fix the checkout price of the related product that is the daily deal</overview>
                     <ticket_id>HAKA-1602</ticket_id>
                 </entry>
             </tag>
-            <tag version="v2.1.9" date="2022-10-11">
+            <tag version="2.1.9" date="2022-10-11">
                 <entry>
                     <type>REFACTOR</type>
                     <overview>Move logic the 'add offer to cart' logic from the observer to a service class.</overview>
                     <ticket_id>MGP-1060</ticket_id>
                 </entry>
             </tag>
-            <tag version="v2.2.1" date="2022-12-05">
+            <tag version="2.2.1" date="2022-12-05">
                 <entry>
                     <type>REFACTOR</type>
                     <overview>Compatibility with Magento v2.4.5.</overview>
                     <ticket_id>MGP-1060</ticket_id>
+                </entry>
+            </tag>
+            <tag version="2.2.9" date="2023-11-29">
+                <entry>
+                    <type>FIX</type>
+                    <overview>Use UTC Time Instead of System Time for Offers Refresh</overview>
+                    <ticket_id>MGP-1294</ticket_id>
                 </entry>
             </tag>
         </changelog>

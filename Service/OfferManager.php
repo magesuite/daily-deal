@@ -123,7 +123,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
 
     public function getOffers()
     {
-        $this->timestamp = $this->dateTime->timestamp();
+        $this->timestamp = $this->dateTime->gmtTimestamp();
 
         $items = $this->offerResource->getOffersByParameters($this->timestamp, $this->storeId);
 

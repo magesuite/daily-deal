@@ -115,6 +115,12 @@ $relatedProducts[] = $linkData;
 
 $product = $objectManager->create('Magento\Catalog\Model\Product');
 
+$originalTimezone = date_default_timezone_get();
+date_default_timezone_set('UTC');
+$currentUtcTime = date('Y-m-d H:i:s');
+$oneHourLater = date('Y-m-d H:i:s', strtotime('+1 hour'));
+date_default_timezone_set($originalTimezone);
+
 $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setId(604)
     ->setAttributeSetId(4)
@@ -129,8 +135,8 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setCanSaveCustomOptions(true)
     ->setDailyDealEnabled(1)
     ->setDailyDealLimit(20)
-    ->setDailyDealFrom('2000-03-14 00:00:00')
-    ->setDailyDealTo('2035-03-25 08:00:00')
+    ->setDailyDealFrom($currentUtcTime)
+    ->setDailyDealTo($oneHourLater)
     ->setDailyDealPrice(5)
     ->setProductLinks($relatedProducts)
     ->save();
