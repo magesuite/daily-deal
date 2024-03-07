@@ -19,10 +19,16 @@ class OfferDataTest extends \PHPUnit\Framework\TestCase
      */
     protected $offerDataHelper;
 
+    /**
+     * @var \Magento\Catalog\Api\ProductRepositoryInterface
+     */
+    protected $productRepository;
+
     public function setUp(): void
     {
         $this->objectManager = \Magento\TestFramework\ObjectManager::getInstance();
         $this->offerDataHelper = $this->objectManager->get(\MageSuite\DailyDeal\Helper\OfferData::class);
+        $this->productRepository = $this->objectManager->get(\Magento\Catalog\Api\ProductRepositoryInterface::class);
 
         $priceRender = $this->objectManager->get(\Magento\Framework\View\LayoutInterface::class)->getBlock('product.price.render.default');
 
@@ -49,7 +55,8 @@ class OfferDataTest extends \PHPUnit\Framework\TestCase
      */
     public function testItReturnEnabledDeal()
     {
-        $offerData = $this->offerDataHelper->prepareOfferData(600);
+        $product = $this->productRepository->getById(600);
+        $offerData = $this->offerDataHelper->prepareOfferData($product);
 
         $this->assertArrayHasKey('deal', $offerData);
 
@@ -83,7 +90,8 @@ class OfferDataTest extends \PHPUnit\Framework\TestCase
      */
     public function testItReturnDisabledDeal()
     {
-        $offerData = $this->offerDataHelper->prepareOfferData(601);
+        $product = $this->productRepository->getById(601);
+        $offerData = $this->offerDataHelper->prepareOfferData($product);
 
         $this->assertFalse($offerData['deal']);
 
@@ -100,7 +108,8 @@ class OfferDataTest extends \PHPUnit\Framework\TestCase
      */
     public function testItReturnsActualStockWhenDealItemLimitHigher()
     {
-        $offerData = $this->offerDataHelper->prepareOfferData(608);
+        $product = $this->productRepository->getById(608);
+        $offerData = $this->offerDataHelper->prepareOfferData($product);
 
         $this->assertTrue($offerData['deal']);
 
@@ -117,7 +126,8 @@ class OfferDataTest extends \PHPUnit\Framework\TestCase
      */
     public function testItReturnsDisabledDealForOutOfStock()
     {
-        $offerData = $this->offerDataHelper->prepareOfferData(609);
+        $product = $this->productRepository->getById(609);
+        $offerData = $this->offerDataHelper->prepareOfferData($product);
 
         $this->assertFalse($offerData['deal']);
 
@@ -134,7 +144,8 @@ class OfferDataTest extends \PHPUnit\Framework\TestCase
      */
     public function testItReturnCorrectDataWithDisabledLimit()
     {
-        $offerData = $this->offerDataHelper->prepareOfferData(600);
+        $product = $this->productRepository->getById(600);
+        $offerData = $this->offerDataHelper->prepareOfferData($product);
 
         $this->assertArrayHasKey('deal', $offerData);
 
@@ -154,7 +165,8 @@ class OfferDataTest extends \PHPUnit\Framework\TestCase
      */
     public function testItDisablesOfferForBundleProducts()
     {
-        $offerData = $this->offerDataHelper->prepareOfferData(607);
+        $product = $this->productRepository->getById(607);
+        $offerData = $this->offerDataHelper->prepareOfferData($product);
         $this->assertFalse($offerData['deal']);
     }
 

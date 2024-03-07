@@ -16,6 +16,16 @@
                     </item>
                 </item>
             </argument>
+
+            <argument name="configurable" xsi:type="array">
+                <item name="prices" xsi:type="array">
+                    <item name="final_price" xsi:type="array">
+                        <item name="render_class" xsi:type="string">Magento\ConfigurableProduct\Pricing\Render\FinalPriceBox</item>
+                        <item name="render_template" xsi:type="string">MageSuite_DailyDeal::product/price/final_price.phtml</item>
+                    </item>
+                </item>
+            </argument>
+
         </arguments>
     </referenceBlock>
 </layout>
