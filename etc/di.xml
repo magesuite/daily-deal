@@ -20,15 +20,6 @@
         </arguments>
     </virtualType>
 
-    <virtualType name="Magento\ConfigurableProduct\Pricing\Price\Pool" type="Magento\Framework\Pricing\Price\Pool">
-        <arguments>
-            <argument name="prices" xsi:type="array">
-                <item name="configurable_offer_price" xsi:type="string">MageSuite\DailyDeal\Pricing\Price\ConfigurableOfferPrice</item>
-                <item name="final_price_without_daily_deal" xsi:type="string">MageSuite\DailyDeal\Pricing\Price\FinalPriceWithoutDailyDeal</item>
-            </argument>
-        </arguments>
-    </virtualType>
-
     <type name="Magento\Quote\Model\QuoteManagement">
         <plugin name="verify_offer_in_checkout" type="\MageSuite\DailyDeal\Plugin\VerifyOfferInCheckout" sortOrder="10"/>
     </type>
@@ -74,7 +65,6 @@
                 <item name="base_price" xsi:type="string">Magento\Catalog\Pricing\Price\BasePrice</item>
                 <item name="final_price" xsi:type="string">Magento\Catalog\Pricing\Price\FinalPrice</item>
                 <item name="offer_price" xsi:type="string">MageSuite\DailyDeal\Pricing\Price\OfferPrice</item>
-                <item name="configurable_offer_price" xsi:type="string">MageSuite\DailyDeal\Pricing\Price\ConfigurableOfferPrice</item>
             </argument>
         </arguments>
     </type>

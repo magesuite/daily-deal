@@ -1,9 +1,0 @@
-<?xml version="1.0"?>
-<config xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:noNamespaceSchemaLocation="urn:magento:framework:ObjectManager/etc/config.xsd">
-    <type name="Magento\ConfigurableProduct\Model\Product\Type\Configurable\Variations\Prices">
-        <plugin name="add_daily_deal_prices" type="MageSuite\DailyDeal\Plugin\ConfigurableProduct\Model\Product\Type\Configurable\Variations\Prices\AddDailyDealPrices" />
-    </type>
-    <type name="Magento\ConfigurableProduct\Block\Product\View\Type\Configurable">
-        <plugin name="add_daily_deal_prices_to_json_config" type="MageSuite\DailyDeal\Plugin\ConfigurableProduct\Block\Product\View\Type\Configurable\AddDailyDealPricesToJsonConfig" />
-    </type>
-</config>

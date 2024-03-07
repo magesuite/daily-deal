@@ -6,15 +6,27 @@ class Offer extends \Magento\Catalog\Model\ResourceModel\AbstractResource
 {
     const DEFAULT_STORE_ID = 0;
 
-    protected array $attributes = [];
+    protected $attributes = [];
 
-    protected \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory;
+    /**
+     * @var \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory
+     */
+    protected $productCollectionFactory;
 
-    protected \Magento\Framework\App\ResourceConnection $resource;
+    /**
+     * @var \Magento\Framework\App\ResourceConnection
+     */
+    protected $resource;
 
-    protected \Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable $configurableModel;
+    /**
+     * @var \Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable
+     */
+    protected $configurableModel;
 
-    protected \Magento\Catalog\Model\ProductRepository $productRepository;
+    /**
+     * @var \Magento\Catalog\Model\ProductRepository
+     */
+    protected $productRepository;
 
     public function __construct(
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
@@ -89,7 +101,18 @@ class Offer extends \Magento\Catalog\Model\ResourceModel\AbstractResource
         return $this->resource->getConnection()->fetchAssoc($select);
     }
 
-    public function getProductQtyInCart($productId, $quoteId): float
+    public function getParentProduct($product)
+    {
+        $productIds = $this->configurableModel->getParentIdsByChild($product->getId());
+
+        if (empty($productIds)) {
+            return false;
+        }
+
+        return $this->productRepository->getById($productIds[0]);
+    }
+
+    public function getProductQtyInCart($productId, $quoteId)
     {
         $table = 'quote_item';
 

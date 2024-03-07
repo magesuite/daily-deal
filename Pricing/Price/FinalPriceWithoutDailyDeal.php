@@ -57,12 +57,8 @@ class FinalPriceWithoutDailyDeal extends \Magento\Framework\Pricing\Price\Abstra
         return $this->value;
     }
 
-    private function isExcludedClass($class): bool
+    private function isExcludedClass($class)
     {
-        if ($this->getProduct()->getTypeId() == \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE) {
-            $this->excludedPriceClasses[] = \Magento\Catalog\Pricing\Price\ConfiguredRegularPrice::class;
-        }
-
         foreach ($this->excludedPriceClasses as $className) {
             if ($class instanceof $className) {
                 return true;
