@@ -8,15 +8,6 @@ $idSuffix = $block->getIdSuffix() ? $block->getIdSuffix() : '';
 ?>
 
 <?php if ($offerPrice->getAmount()->getValue()) : ?>
-    <span class="old-price">
-        <?= /* @noEscape */ $block->renderAmount($finalPriceWithoutDailyDeal->getAmount(), [
-            'display_label'     => __('Daily Deal Old Price'),
-            'price_id'          => $block->getPriceId('daily-deal-old-price-' . $idSuffix),
-            'include_container' => true,
-            'skip_adjustments'  => true,
-            'price_type'        => 'dailyDealOldPrice'
-        ]); ?>
-    </span>
     <span class="special-price">
         <?= /* @noEscape */ $block->renderAmount($offerPrice->getAmount(), [
             'display_label'     => __('Daily Deal Price'),
@@ -24,6 +15,15 @@ $idSuffix = $block->getIdSuffix() ? $block->getIdSuffix() : '';
             'include_container' => true,
             'skip_adjustments'  => true,
             'price_type'        => 'dailyDealPrice'
+        ]); ?>
+    </span>
+    <span class="old-price">
+        <?= /* @noEscape */ $block->renderAmount($finalPriceWithoutDailyDeal->getAmount(), [
+            'display_label'     => __('Daily Deal Old Price'),
+            'price_id'          => $block->getPriceId('daily-deal-old-price-' . $idSuffix),
+            'include_container' => true,
+            'skip_adjustments'  => true,
+            'price_type'        => 'dailyDealOldPrice'
         ]); ?>
     </span>
 <?php else: ?>
