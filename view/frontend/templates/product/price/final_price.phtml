@@ -35,27 +35,27 @@ $idSuffix = $block->getIdSuffix() ? $block->getIdSuffix() : '';
     $idSuffix = $block->getIdSuffix() ? $block->getIdSuffix() : '';
     $schema = ($block->getZone() == 'item_view') ? true : false;
     ?>
-    <span class="normal-price">
-    <?= /* @noEscape */ $block->renderAmount($finalPriceModel->getAmount(), [
-        'display_label' => __('As low as'),
-        'price_id' => $block->getPriceId('product-price-' . $idSuffix),
-        'price_type' => 'finalPrice',
-        'include_container' => true,
-        'schema' => $schema,
-    ]);
-    ?>
-    </span>
     <?php if (!$block->isProductList() && $block->hasSpecialPrice()) : ?>
         <span class="old-price sly-old-price no-display">
-        <?= /* @noEscape */ $block->renderAmount($priceModel->getAmount(), [
-            'display_label'     => __('Regular Price'),
-            'price_id'          => $block->getPriceId('old-price-' . $idSuffix),
-            'price_type'        => 'oldPrice',
-            'include_container' => true,
-            'skip_adjustments'  => true
-        ]); ?>
-    </span>
+            <?= /* @noEscape */ $block->renderAmount($priceModel->getAmount(), [
+                'display_label'     => __('Regular Price'),
+                'price_id'          => $block->getPriceId('old-price-' . $idSuffix),
+                'price_type'        => 'oldPrice',
+                'include_container' => true,
+                'skip_adjustments'  => true
+            ]); ?>
+        </span>
     <?php endif; ?>
+    <span class="normal-price">
+        <?= /* @noEscape */ $block->renderAmount($finalPriceModel->getAmount(), [
+            'display_label' => __('As low as'),
+            'price_id' => $block->getPriceId('product-price-' . $idSuffix),
+            'price_type' => 'finalPrice',
+            'include_container' => true,
+            'schema' => $schema,
+        ]);
+        ?>
+    </span>
 
     <?php if ($block->showMinimalPrice()) : ?>
         <?php if ($block->getUseLinkForAsLowAs()) :?>
