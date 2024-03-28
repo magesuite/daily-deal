@@ -29,6 +29,10 @@
         </arguments>
     </virtualType>
 
+    <type name="Magento\Framework\Pricing\Render">
+        <plugin name="use_configurable_offer_price_for_products_with_daily_deal" type="MageSuite\DailyDeal\Plugin\Framework\Pricing\Render\UseConfigurableOfferPriceForProductsWithDailyDeal" sortOrder="10"/>
+    </type>
+
     <type name="Magento\Quote\Model\QuoteManagement">
         <plugin name="verify_offer_in_checkout" type="\MageSuite\DailyDeal\Plugin\VerifyOfferInCheckout" sortOrder="10"/>
     </type>
