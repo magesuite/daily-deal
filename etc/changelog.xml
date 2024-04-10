@@ -61,6 +61,13 @@
                     <ticket_id>MGP-1294</ticket_id>
                 </entry>
             </tag>
+            <tag version="2.3.0" date="2024-03-01">
+                <entry>
+                    <type>FEAT</type>
+                    <overview>Enable Daily Deal for configurable products</overview>
+                    <ticket_id>KRG-2705</ticket_id>
+                </entry>
+            </tag>
         </changelog>
     </module>
 </config>

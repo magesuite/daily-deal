@@ -4,35 +4,22 @@ namespace MageSuite\DailyDeal\Helper;
 
 class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
 {
-    /**
-     * @var \MageSuite\DailyDeal\Helper\Configuration
-     */
-    protected $configuration;
+    const AVAILABLE_PRODUCT_TYPES = [
+        \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE,
+        \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE
+    ];
 
-    /**
-     * @var \Magento\Catalog\Api\ProductRepositoryInterface;
-     */
-    protected $productRepository;
+    protected \MageSuite\DailyDeal\Helper\Configuration $configuration;
 
-    /**
-     * @var \Magento\Framework\Stdlib\DateTime\DateTime
-     */
-    protected $dateTime;
+    protected \Magento\Catalog\Api\ProductRepositoryInterface $productRepository;
 
-    /**
-     * @var \Magento\Catalog\Block\Product\View
-     */
-    protected $productView;
+    protected \Magento\Framework\Stdlib\DateTime\DateTime $dateTime;
 
-    /**
-     * @var \MageSuite\Discount\Helper\Discount
-     */
-    protected $discountHelper;
+    protected \Magento\Catalog\Block\Product\View $productView;
 
-    /**
-     * @var \MageSuite\DailyDeal\Service\SalableStockResolver
-     */
-    protected $salableStockResolver;
+    protected \MageSuite\Discount\Helper\Discount $discountHelper;
+
+    protected \MageSuite\DailyDeal\Service\SalableStockResolver $salableStockResolver;
 
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
@@ -53,22 +40,16 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         $this->salableStockResolver = $salableStockResolver;
     }
 
-    /**
-     * @param $product \Magento\Catalog\Model\Product
-     * @return array|bool
-     */
-    public function prepareOfferData($product)
+    public function prepareOfferData(\Magento\Catalog\Api\Data\ProductInterface $product): ?array
     {
         $isActive = $this->configuration->isActive();
-
         if (!$isActive) {
-            return false;
+            return null;
         }
 
         $product = $this->getProduct($product);
-
         if (!$product) {
-            return false;
+            return null;
         }
 
         if ($product->getData('daily_deal_offer_data')) {
@@ -76,7 +57,7 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         }
 
         $isQtyLimitationEnabled = $this->configuration->isQtyLimitationEnabled();
-        $salableQty = $this->salableStockResolver->execute($product->getSku());
+        $salableQty = $this->salableStockResolver->execute($product);
         $result = [
             'deal' => $this->isOfferEnabled($product),
             'items' => $isQtyLimitationEnabled ? ($this->getOfferLimit($product) > $salableQty ? $salableQty : $this->getOfferLimit($product)) : 0,
@@ -98,21 +79,19 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         return $result;
     }
 
-    public function isOfferEnabled($product)
+    public function isOfferEnabled(\Magento\Catalog\Api\Data\ProductInterface $product): bool
     {
         $product = $this->getProduct($product);
-
         if (!$product || !$product->getId()) {
             return false;
         }
 
         $offerEnabled = (boolean)$product->getDailyDealEnabled();
-
         if (!$offerEnabled) {
             return false;
         }
 
-        if ($product->getTypeId() !== \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE) {
+        if (!in_array($product->getTypeId(), self::AVAILABLE_PRODUCT_TYPES)) {
             return false;
         }
 
@@ -120,7 +99,7 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
             return false;
         }
 
-        if ($this->salableStockResolver->execute($product->getSku()) < 0) {
+        if ($this->salableStockResolver->execute($product) < 0) {
             return false;
         }
 
@@ -156,10 +135,9 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         return $result;
     }
 
-    public function getDiscountWithoutDD($product)
+    public function getDiscountWithoutDD(\Magento\Catalog\Api\Data\ProductInterface $product)
     {
         $finalPriceWithoutDailyDeal = $product->getPriceInfo()->getPrice(\MageSuite\DailyDeal\Pricing\Price\FinalPriceWithoutDailyDeal::PRICE_CODE)->getAmount()->getValue();
-
         return $this->discountHelper->getSalePercentage($product, $finalPriceWithoutDailyDeal);
     }
 

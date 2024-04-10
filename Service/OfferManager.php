@@ -13,60 +13,27 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
     protected $storeId;
     protected $productsQuantities = [];
 
-    /**
-     * @var \Magento\Quote\Api\CartRepositoryInterface
-     */
-    protected $quoteRepository;
+    protected \Magento\Quote\Api\CartRepositoryInterface $quoteRepository;
 
-    /**
-     * @var \Magento\Quote\Model\Quote\TotalsCollector
-     */
-    protected $totalsCollector;
+    protected \Magento\Quote\Model\Quote\TotalsCollector $totalsCollector;
 
-    /**
-     * @var \Magento\Framework\Stdlib\DateTime\DateTime
-     */
-    protected $dateTime;
+    protected \Magento\Framework\Stdlib\DateTime\DateTime $dateTime;
 
-    /**
-     * @var \Magento\Store\Model\StoreManagerInterface
-     */
-    protected $storeManager;
+    protected \Magento\Store\Model\StoreManagerInterface $storeManager;
 
-    /**
-     * @var \MageSuite\DailyDeal\Helper\Configuration
-     */
-    protected $configuration;
+    protected \MageSuite\DailyDeal\Helper\Configuration $configuration;
 
-    /**
-     * @var \MageSuite\DailyDeal\Helper\OfferData
-     */
-    protected $offerData;
+    protected \MageSuite\DailyDeal\Helper\OfferData $offerData;
 
-    /**
-     * @var \MageSuite\DailyDeal\Model\ResourceModel\Offer
-     */
-    protected $offerResource;
+    protected \MageSuite\DailyDeal\Model\ResourceModel\Offer $offerResource;
 
-    /**
-     * @var \MageSuite\DailyDeal\Service\CacheCleaner
-     */
-    protected $cacheCleaner;
+    protected \MageSuite\DailyDeal\Service\CacheCleaner $cacheCleaner;
 
-    /**
-     * @var \Magento\Indexer\Model\IndexerFactory
-     */
-    protected $indexerFactory;
+    protected \Magento\Indexer\Model\IndexerFactory $indexerFactory;
 
-    /**
-     * @var \MageSuite\DailyDeal\Service\SalableStockResolver
-     */
-    protected $salableStockResolver;
+    protected \MageSuite\DailyDeal\Service\SalableStockResolver $salableStockResolver;
 
-    /**
-     * @var \Magento\Catalog\Model\ResourceModel\Product\Action
-     */
-    protected $productResourceAction;
+    protected \Magento\Catalog\Model\ResourceModel\Product\Action $productResourceAction;
 
     public function __construct(
         \Magento\Quote\Api\CartRepositoryInterface $quoteRepository,
@@ -94,7 +61,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
         $this->productResourceAction = $productResourceAction;
     }
 
-    public function refreshOffers($storeId = null)
+    public function refreshOffers(?int $storeId = null): int
     {
         $this->setStoreId($storeId);
         $offers = $this->getOffers();
@@ -275,11 +242,6 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
         return $product->getDailyDealLimit();
     }
 
-    public function getParentProduct($product)
-    {
-        return $this->offerResource->getParentProduct($product);
-    }
-
     public function getProductQtyInCart($product, $quoteId)
     {
         return $this->offerResource->getProductQtyInCart($product->getId(), $quoteId);
@@ -370,12 +332,8 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
     protected function getProductsQuantities($items)
     {
         $qtys = [];
-
         foreach ($items as $product) {
-            $qtys[$product->getId()] = $this->salableStockResolver->execute(
-                $product->getSku(),
-                $this->storeId
-            );
+            $qtys[$product->getId()] = $this->salableStockResolver->execute($product, $this->storeId);
         }
 
         $this->productsQuantities = $qtys;
