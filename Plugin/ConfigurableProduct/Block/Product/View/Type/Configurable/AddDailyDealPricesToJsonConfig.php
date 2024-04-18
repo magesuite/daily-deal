@@ -32,7 +32,7 @@ class AddDailyDealPricesToJsonConfig
         \Magento\ConfigurableProduct\Block\Product\View\Type\Configurable $subject,
         $result
     ) {
-        if (!$this->configuration->isActive() && $this->offerData->isOfferEnabled($subject->getProduct()) === false) {
+        if (!$this->configuration->isActive() || $this->offerData->isOfferEnabled($subject->getProduct()) === false) {
             return $result;
         }
 
