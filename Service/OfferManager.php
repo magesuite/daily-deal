@@ -15,8 +15,6 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
 
     protected \Magento\Quote\Api\CartRepositoryInterface $quoteRepository;
 
-    protected \Magento\Quote\Model\Quote\TotalsCollector $totalsCollector;
-
     protected \Magento\Framework\Stdlib\DateTime\DateTime $dateTime;
 
     protected \Magento\Store\Model\StoreManagerInterface $storeManager;
@@ -37,7 +35,6 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
 
     public function __construct(
         \Magento\Quote\Api\CartRepositoryInterface $quoteRepository,
-        \Magento\Quote\Model\Quote\TotalsCollector $totalsCollector,
         \Magento\Framework\Stdlib\DateTime\DateTime $dateTime,
         \Magento\Store\Model\StoreManagerInterface $storeManager,
         \MageSuite\DailyDeal\Helper\Configuration $configuration,
@@ -49,7 +46,6 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
         \Magento\Catalog\Model\ResourceModel\Product\Action $productResourceAction
     ) {
         $this->quoteRepository = $quoteRepository;
-        $this->totalsCollector = $totalsCollector;
         $this->dateTime = $dateTime;
         $this->storeManager = $storeManager;
         $this->configuration = $configuration;
@@ -198,8 +194,8 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
                 $quote->deleteItem($quoteItem);
             }
 
-            $this->totalsCollector->collect($quote);
-            $this->quoteRepository->save($quote->collectTotals());
+            $quote->setTotalsCollectedFlag(false)->collectTotals();
+            $this->quoteRepository->save($quote);
         }
 
         return true;
