@@ -68,6 +68,13 @@
                     <ticket_id>KRG-2705</ticket_id>
                 </entry>
             </tag>
+            <tag version="2.4.0" date="2024-06-19">
+                <entry>
+                    <type>FEAT</type>
+                    <overview>Add allow daily deal for backorders option</overview>
+                    <ticket_id>HAAR-3892</ticket_id>
+                </entry>
+            </tag>
         </changelog>
     </module>
 </config>

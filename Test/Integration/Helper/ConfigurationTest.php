@@ -28,11 +28,13 @@ class ConfigurationTest extends \PHPUnit\Framework\TestCase
      * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 0
      * @magentoConfigFixture current_store daily_deal/general/product_tile_display badge
+     * @magentoConfigFixture current_store daily_deal/general/allow_backorders 1
      */
     public function testItReturnsCorrectConfig()
     {
         $this->assertTrue($this->configurationHelper->isActive());
         $this->assertFalse($this->configurationHelper->isQtyLimitationEnabled());
         $this->assertEquals('badge', $this->configurationHelper->displayOnTile());
+        $this->assertTrue($this->configurationHelper->isAllowBackOrdersEnabled());
     }
 }

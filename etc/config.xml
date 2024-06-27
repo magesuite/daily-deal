@@ -5,6 +5,7 @@
             <general>
                 <active>0</active>
                 <use_qty_limitation>0</use_qty_limitation>
+                <allow_backorders>0</allow_backorders>
                 <product_tile_display>none</product_tile_display>
             </general>
         </daily_deal>
