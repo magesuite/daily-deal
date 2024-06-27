@@ -97,53 +97,17 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
     {
         $offerData = $offer->getData();
 
-        $from = $offerData['daily_deal_from'] ? strtotime($offerData['daily_deal_from']) : null;
-        $to = $offerData['daily_deal_to'] ? strtotime($offerData['daily_deal_to']) : null;
-
         $productQty = null;
         if ($offer->getTypeId() == \Magento\Catalog\Model\Product\Type::TYPE_SIMPLE && isset($this->productsQuantities[$offerData['entity_id']])) {
             $productQty = $this->productsQuantities[$offerData['entity_id']];
         }
 
         if ($offerData['daily_deal_enabled']) {
-
-            // $productQty should be checked only for frontend stores, it doesn't make sense to check it for admin store
-            if ($storeId != \Magento\Store\Model\Store::DEFAULT_STORE_ID && $productQty !== null && $productQty < 1) {
+            if ($this->validateForRemove($offerData, $storeId, $productQty, $isQtyLimitationEnabled)) {
                 return self::TYPE_REMOVE;
             }
-
-            if (!$from || !$to) {
-                return self::TYPE_REMOVE;
-            }
-
-            if ($from > $this->timestamp || $to < $this->timestamp) {
-                return self::TYPE_REMOVE;
-            }
-
-            if ($isQtyLimitationEnabled && isset($offerData['daily_deal_limit']) // phpcs:ignore
-                && $offerData['daily_deal_limit'] !== null
-                && (float)$offerData['daily_deal_limit'] == 0) {
-                return self::TYPE_REMOVE;
-            }
-
         } else {
-
-            if ($productQty !== null && $productQty < 1) {
-                return null;
-            }
-
-            if (!$from || !$to) {
-                return null;
-            }
-
-            if ($isQtyLimitationEnabled // phpcs:ignore
-                && isset($offerData['daily_deal_limit'])
-                && $offerData['daily_deal_limit'] !== null
-                && (float)$offerData['daily_deal_limit'] == 0) {
-                return null;
-            }
-
-            if ($from < $this->timestamp && $to > $this->timestamp) {
+            if ($this->validateForAdd($offerData, $productQty, $isQtyLimitationEnabled)) {
                 return self::TYPE_ADD;
             }
         }
@@ -333,5 +297,83 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
         }
 
         $this->productsQuantities = $qtys;
+    }
+
+    protected function validateForRemove($offerData, $storeId, $productQty, $isQtyLimitationEnabled): bool
+    {
+        // $productQty should be checked only for frontend stores, it doesn't make sense to check it for admin store
+        if ($storeId != \Magento\Store\Model\Store::DEFAULT_STORE_ID &&
+            $productQty !== null &&
+            $productQty < 1 &&
+            !$this->isValidForBackorders($offerData)
+        ) {
+            return true;
+        }
+
+        $from = $this->getFrom($offerData);
+        $to = $this->getTo($offerData);
+
+        if (!$from || !$to) {
+            return true;
+        }
+
+        if ($from > $this->timestamp || $to < $this->timestamp) {
+            return true;
+        }
+
+        if ($isQtyLimitationEnabled && isset($offerData['daily_deal_limit']) // phpcs:ignore
+            && $offerData['daily_deal_limit'] !== null
+            && (float)$offerData['daily_deal_limit'] == 0) {
+            return true;
+        }
+
+        return false;
+    }
+
+    private function validateForAdd($offerData, $productQty, $isQtyLimitationEnabled): bool
+    {
+        if ($productQty !== null &&
+            $productQty < 1 &&
+            !$this->isValidForBackorders($offerData)
+        ) {
+            return false;
+        }
+
+        $from = $this->getFrom($offerData);
+        $to = $this->getTo($offerData);
+
+        if (!$from || !$to) {
+            return false;
+        }
+
+        if ($isQtyLimitationEnabled // phpcs:ignore
+            && isset($offerData['daily_deal_limit'])
+            && $offerData['daily_deal_limit'] !== null
+            && (float)$offerData['daily_deal_limit'] == 0) {
+            return false;
+        }
+
+        if ($from < $this->timestamp && $to > $this->timestamp) {
+            return true;
+        }
+
+        return false;
+    }
+
+    public function isValidForBackorders($offerData): bool
+    {
+        $backorders = $offerData['backorders'] ?? \Magento\CatalogInventory\Model\Stock::BACKORDERS_NO;
+
+        return $backorders != \Magento\CatalogInventory\Model\Stock::BACKORDERS_NO;
+    }
+
+    public function getFrom($offerData): bool|int|null
+    {
+        return $offerData['daily_deal_from'] ? strtotime($offerData['daily_deal_from']) : null;
+    }
+
+    public function getTo($offerData): bool|int|null
+    {
+        return $offerData['daily_deal_to'] ? strtotime($offerData['daily_deal_to']) : null;
     }
 }

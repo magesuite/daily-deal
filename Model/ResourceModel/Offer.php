@@ -16,16 +16,20 @@ class Offer extends \Magento\Catalog\Model\ResourceModel\AbstractResource
 
     protected \Magento\Catalog\Model\ProductRepository $productRepository;
 
+    protected \MageSuite\DailyDeal\Helper\Configuration $configuration;
+
     public function __construct(
         \Magento\Catalog\Model\ResourceModel\Product\CollectionFactory $productCollectionFactory,
         \Magento\Framework\App\ResourceConnection $resource,
         \Magento\ConfigurableProduct\Model\ResourceModel\Product\Type\Configurable $configurableModel,
-        \Magento\Catalog\Model\ProductRepository $productRepository
+        \Magento\Catalog\Model\ProductRepository $productRepository,
+        \MageSuite\DailyDeal\Helper\Configuration $configuration
     ) {
         $this->productCollectionFactory = $productCollectionFactory;
         $this->resource = $resource;
         $this->configurableModel = $configurableModel;
         $this->productRepository = $productRepository;
+        $this->configuration = $configuration;
     }
 
     public function getOffersByParameters($timestamp, $storeId)
@@ -42,8 +46,23 @@ class Offer extends \Magento\Catalog\Model\ResourceModel\AbstractResource
             ->addFieldToFilter('daily_deal_enabled', ['eq' => 0]);
 
         $productsCollection = $this->addDailyDealEnabledCondition($productsCollection);
+        $productsCollection = $this->addBackOrdersData($productsCollection);
 
         return $productsCollection->getItems();
+    }
+
+    protected function addBackOrdersData(\Magento\Catalog\Model\ResourceModel\Product\Collection $productsCollection): \Magento\Catalog\Model\ResourceModel\Product\Collection
+    {
+        if (!$this->configuration->isAllowBackOrdersEnabled()) {
+            return $productsCollection;
+        }
+
+        $productsCollection->getSelect()->joinLeft('cataloginventory_stock_item',
+            'cataloginventory_stock_item.product_id = e.entity_id',
+            ['backorders' => 'backorders']
+        );
+
+        return $productsCollection;
     }
 
     private function addDailyDealEnabledCondition(\Magento\Catalog\Model\ResourceModel\Product\Collection $productsCollection)

@@ -34,6 +34,13 @@ class Configuration extends \Magento\Framework\App\Helper\AbstractHelper
         return ($config['active'] && $config['use_qty_limitation']) ? true : false;
     }
 
+    public function isAllowBackOrdersEnabled(): bool
+    {
+        $config = $this->getConfig();
+
+        return (bool)$config['allow_backorders'];
+    }
+
     public function displayOnTile()
     {
         $config = $this->getConfig();

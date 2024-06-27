@@ -51,7 +51,7 @@ class OfferManagerTest extends \PHPUnit\Framework\TestCase
             $offersArray[] = $offer;
         }
 
-        $this->assertCount(8, $offersArray);
+        $this->assertCount(9, $offersArray);
         $this->assertEquals(600, $offersArray[0]->getId());
         $this->assertEquals(601, $offersArray[1]->getId());
 
@@ -106,6 +106,48 @@ class OfferManagerTest extends \PHPUnit\Framework\TestCase
         $product = $this->productRepository->get($offersArray[2]->getSku());
 
         $this->assertEquals(1, $product->getDailyDealEnabled());
+    }
+
+    /**
+     * @magentoConfigFixture current_store daily_deal/general/active 1
+     * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
+     * @magentoConfigFixture current_store daily_deal/general/allow_backorders 1
+     */
+    public function testItReturnsCorrectDataForBackorders()
+    {
+        $date = new \DateTime('2018-03-20 01:00:00');
+        $storeId = 1;
+
+        $this->offerManager->setTimestamp($date->getTimestamp());
+        $this->offerManager->setStoreId($storeId);
+
+        $offers = $this->offerManager->getOffers();
+
+        foreach ($offers as $offer) {
+            $product = $this->productRepository->get($offer->getSku());
+            $productBackorders = $product->getExtensionAttributes()->getStockItem()->getBackorders();
+            $this->assertEquals($productBackorders, $offer->getBackorders());
+        }
+    }
+
+    /**
+     * @magentoConfigFixture current_store daily_deal/general/active 1
+     * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
+     * @magentoConfigFixture current_store daily_deal/general/allow_backorders 0
+     */
+    public function testItReturnsNoBackordersWhenDisabled()
+    {
+        $date = new \DateTime('2018-03-20 01:00:00');
+        $storeId = 1;
+
+        $this->offerManager->setTimestamp($date->getTimestamp());
+        $this->offerManager->setStoreId($storeId);
+
+        $offers = $this->offerManager->getOffers();
+
+        foreach ($offers as $offer) {
+            $this->assertNull($offer->getBackorders());
+        }
     }
 
     /**
