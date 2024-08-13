@@ -68,6 +68,10 @@ class UpdateOfferInCart
 
             $offerLimit = $this->offerManager->getOfferLimit($product);
 
+            if ($offerLimit === null) {
+                continue;
+            }
+
             if ($product->getTypeId() != 'simple') {
                 $qtyAmountInCart = $this->offerManager->getProductQtyInCart($product, $item->getQuoteId());
 
