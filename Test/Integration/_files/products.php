@@ -115,12 +115,6 @@ $relatedProducts[] = $linkData;
 
 $product = $objectManager->create('Magento\Catalog\Model\Product');
 
-$originalTimezone = date_default_timezone_get();
-date_default_timezone_set('UTC');
-$currentUtcTime = date('Y-m-d H:i:s');
-$oneHourLater = date('Y-m-d H:i:s', strtotime('+1 hour'));
-date_default_timezone_set($originalTimezone);
-
 $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setId(604)
     ->setAttributeSetId(4)
@@ -135,8 +129,8 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setCanSaveCustomOptions(true)
     ->setDailyDealEnabled(1)
     ->setDailyDealLimit(20)
-    ->setDailyDealFrom($currentUtcTime)
-    ->setDailyDealTo($oneHourLater)
+    ->setDailyDealFrom('2000-03-14 00:00:00')
+    ->setDailyDealTo('2035-03-25 08:00:00')
     ->setDailyDealPrice(5)
     ->setProductLinks($relatedProducts)
     ->save();
@@ -297,6 +291,8 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setDailyDealPrice(5)
     ->save();
 
+$product = $objectManager->create('Magento\Catalog\Model\Product');
+
 $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setId(610)
     ->setAttributeSetId(4)
@@ -316,4 +312,24 @@ $product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
     ->setDailyDealFrom('2018-03-19 00:00:00')
     ->setDailyDealTo('2031-03-22 08:00:00')
     ->setDailyDealPrice(5)
+    ->save();
+
+$product->setTypeId(\Magento\Catalog\Model\Product\Type::TYPE_SIMPLE)
+    ->setId(611)
+    ->setAttributeSetId(4)
+    ->setName('Daily deal offer qty limit')
+    ->setSku('daily_deal_qty_limit')
+    ->setUrlKey('daily_deal_qty_limit')
+    ->setPrice(20)
+    ->setVisibility(\Magento\Catalog\Model\Product\Visibility::VISIBILITY_BOTH)
+    ->setStatus(\Magento\Catalog\Model\Product\Attribute\Source\Status::STATUS_ENABLED)
+    ->setWebsiteIds([1])
+    ->setStockData(['use_config_manage_stock' => 1, 'qty' => 10, 'is_qty_decimal' => 0, 'is_in_stock' => 1])
+    ->setCanSaveCustomOptions(true)
+    ->setSpecialPrice(5)
+    ->setDailyDealEnabled(1)
+    ->setDailyDealLimit(2)
+    ->setDailyDealFrom('2000-03-14 00:00:00')
+    ->setDailyDealTo('2035-03-25 08:00:00')
+    ->setDailyDealPrice(10)
     ->save();

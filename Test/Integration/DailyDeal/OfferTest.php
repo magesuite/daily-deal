@@ -14,6 +14,7 @@ class OfferTest extends \PHPUnit\Framework\TestCase
     protected ?\MageSuite\DailyDeal\Model\ResourceModel\Offer $offerResource = null;
     protected ?\Magento\Catalog\Api\ProductRepositoryInterface $productRepository = null;
     protected ?\Magento\Quote\Model\QuoteManagement $quoteManagement = null;
+    protected ?\Magento\Quote\Api\CartRepositoryInterface $cartRepository = null;
 
     public function setUp(): void
     {
@@ -23,6 +24,7 @@ class OfferTest extends \PHPUnit\Framework\TestCase
         $this->offerResource = $this->objectManager->get(\MageSuite\DailyDeal\Model\ResourceModel\Offer::class);
         $this->productRepository = $this->objectManager->get(\Magento\Catalog\Api\ProductRepositoryInterface::class);
         $this->quoteManagement = $this->objectManager->get(\Magento\Quote\Model\QuoteManagement::class);
+        $this->cartRepository = $this->objectManager->get(\Magento\Quote\Api\CartRepositoryInterface::class);
     }
 
     /**
@@ -262,5 +264,55 @@ class OfferTest extends \PHPUnit\Framework\TestCase
         $quote->collectTotals();
 
         return $quote;
+    }
+
+    /**
+     * @magentoAppArea frontend
+     * @magentoAppIsolation enabled
+     * @magentoDbIsolation enabled
+     * @magentoDataFixture MageSuite_DailyDeal::Test/Integration/_files/products.php
+     * @magentoConfigFixture current_store daily_deal/general/active 1
+     * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
+     */
+    public function testDailyDealOfferQtyLimit(): void
+    {
+        $product = $this->productRepository->get('daily_deal_qty_limit');
+
+        $quoteId = $this->quoteManagement->createEmptyCart();
+
+        for ($i = 0; $i < 2; $i++) {
+            $quote = $this->cartRepository->get($quoteId);
+            $this->cart->setQuote($quote);
+            $this->cart->addProduct($product, ['qty' => 3]);
+            $this->cartRepository->save($this->cart->getQuote());
+        }
+
+        $quote = $this->cartRepository->get($quoteId);
+        $items = $quote->getAllItems();
+
+        $productsWithDailyDealPrice = new \Magento\Framework\DataObject([]);
+        $productsWithNormalPrice = new \Magento\Framework\DataObject([]);
+
+        foreach ($items as $item) {
+            $itemData = [
+                'qty' => $item->getQty(),
+                'customPrice' => $item->getCustomPrice(),
+                'price' => $item->getProduct()->getPrice()
+            ];
+
+            if ($item->getBuyRequest()->getData('is_daily_deal')) {
+                $productsWithDailyDealPrice->setData($itemData);
+            } else {
+                $productsWithNormalPrice->addData($itemData);
+            }
+        }
+
+        $this->assertEquals(2, $productsWithDailyDealPrice->getData('qty'));
+        $this->assertEquals(5, $productsWithDailyDealPrice->getData('customPrice'));
+        $this->assertEquals(20, $productsWithDailyDealPrice->getData('price'));
+
+        $this->assertEquals(4, $productsWithNormalPrice->getData('qty'));
+        $this->assertEquals(null, $productsWithNormalPrice->getData('customPrice'));
+        $this->assertEquals(20, $productsWithNormalPrice->getData('price'));
     }
 }

@@ -50,7 +50,7 @@ class AddOfferToCart implements \Magento\Framework\Event\ObserverInterface
 
         $isDailyDealCustomOption = $product->getCustomOption(\MageSuite\DailyDeal\Service\OfferManager::ITEM_OPTION_DD_OFFER);
 
-        if ($isDailyDealCustomOption && $isDailyDealCustomOption->getValue() === false) {
+        if ($isDailyDealCustomOption && !$isDailyDealCustomOption->getValue()) {
             return false;
         }
 
