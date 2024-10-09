@@ -63,9 +63,11 @@ class RecalculateCartOnCartView
     protected function updateCustomPrices()
     {
         foreach ($this->cart->getItems() as $cartItem) {
-            if ($cartItem->getParentItemId() === null) {
-                $this->dailyDealApplier->apply($cartItem);
+            if ($cartItem->getParentItemId()) {
+                continue;
             }
+
+            $this->dailyDealApplier->apply($cartItem);
         }
     }
 }
