@@ -56,11 +56,9 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
             return $product->getData('daily_deal_offer_data');
         }
 
-        $isQtyLimitationEnabled = $this->configuration->isQtyLimitationEnabled();
-        $salableQty = $this->salableStockResolver->execute($product);
         $result = [
             'deal' => $this->isOfferEnabled($product),
-            'items' => $isQtyLimitationEnabled ? ($this->getOfferLimit($product) > $salableQty ? $salableQty : $this->getOfferLimit($product)) : 0,
+            'items' => $this->getItemsOfferLimit($product),
             'from' => $product->getDailyDealFrom() === null ? null : strtotime($product->getDailyDealFrom()),
             'initialAmount' => $product->getDailyDealInitialAmount(),
             'to' => $product->getDailyDealTo() === null ? null : strtotime($product->getDailyDealTo()),
@@ -105,7 +103,7 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
 
         $offerTo = $product->getDailyDealTo();
 
-        if($offerTo === null) {
+        if ($offerTo === null) {
             return true;
         }
 
@@ -183,13 +181,31 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         return $product;
     }
 
-    public function isDailyDealCounterApplicable($dailyDealData, $dailyDealCounterPlace)
+    public function isDailyDealCounterApplicable(?array $dailyDealData, string $dailyDealCounterPlace): bool
     {
         return $dailyDealData && $dailyDealData['deal'] && ($dailyDealCounterPlace === 'pdp' || ($dailyDealCounterPlace === 'tile' && $dailyDealData['displayType'] === 'badge_counter'));
     }
 
-    public function isDailyDealPriceApplicable($dailyDealData)
+    public function isDailyDealPriceApplicable(?array $dailyDealData): bool
     {
         return $dailyDealData && $dailyDealData['deal'] && $dailyDealData['displayType'] !== 'none';
+    }
+
+    protected function getItemsOfferLimit(\Magento\Catalog\Api\Data\ProductInterface $product): int
+    {
+        if (!$this->configuration->isQtyLimitationEnabled()) {
+            return 0;
+        }
+
+        $productBackorders = $product->getExtensionAttributes()?->getStockItem()?->getBackorders();
+
+        if ($productBackorders) {
+            return (int)$product->getDailyDealLimit();
+        }
+
+        $salableQty = (int)$this->salableStockResolver->execute($product);
+        $offerLimit = (int)$this->getOfferLimit($product);
+
+        return $offerLimit > $salableQty ? $salableQty : $offerLimit;
     }
 }

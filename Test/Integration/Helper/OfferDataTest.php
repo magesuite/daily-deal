@@ -140,6 +140,44 @@ class OfferDataTest extends \PHPUnit\Framework\TestCase
      * @magentoDbIsolation enabled
      * @magentoDataFixture loadProducts
      * @magentoConfigFixture current_store daily_deal/general/active 1
+     * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
+     * @magentoConfigFixture current_store daily_deal/general/allow_backorders 1
+     */
+    public function testItReturnsEnabledDealForBackordersWithQtyLimit(): void
+    {
+        $product = $this->productRepository->getById(610);
+        $offerData = $this->offerDataHelper->prepareOfferData($product);
+
+        $this->assertTrue($offerData['deal']);
+
+        $this->assertEquals(50, $offerData['items']);
+    }
+
+    /**
+     * @magentoAppArea frontend
+     * @magentoAppIsolation enabled
+     * @magentoDbIsolation enabled
+     * @magentoDataFixture loadProducts
+     * @magentoConfigFixture current_store daily_deal/general/active 1
+     * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 0
+     * @magentoConfigFixture current_store daily_deal/general/allow_backorders 1
+     */
+    public function testItReturnsEnabledDealForBackordersWithoutQtyLimit(): void
+    {
+        $product = $this->productRepository->getById(610);
+        $offerData = $this->offerDataHelper->prepareOfferData($product);
+
+        $this->assertTrue($offerData['deal']);
+
+        $this->assertEquals(0, $offerData['items']);
+    }
+
+    /**
+     * @magentoAppArea frontend
+     * @magentoAppIsolation enabled
+     * @magentoDbIsolation enabled
+     * @magentoDataFixture loadProducts
+     * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 0
      */
     public function testItReturnCorrectDataWithDisabledLimit()
