@@ -7,15 +7,18 @@ class RecalculateCartOnCartView
     protected \MageSuite\DailyDeal\Helper\Configuration $configuration;
     protected \Magento\Checkout\Model\Session $session;
     protected \Magento\Checkout\Model\Cart $cart;
+    protected \MageSuite\DailyDeal\Service\DailyDealApplier $dailyDealApplier;
 
     public function __construct(
         \Magento\Checkout\Model\Cart $cart,
         \Magento\Checkout\Model\Session $session,
-        \MageSuite\DailyDeal\Helper\Configuration $configuration
+        \MageSuite\DailyDeal\Helper\Configuration $configuration,
+        \MageSuite\DailyDeal\Service\DailyDealApplier $dailyDealApplier
     ) {
         $this->cart = $cart;
         $this->session = $session;
         $this->configuration = $configuration;
+        $this->dailyDealApplier = $dailyDealApplier;
     }
 
     /**
@@ -30,6 +33,7 @@ class RecalculateCartOnCartView
         }
 
         if ($this->isNeedToRecalculateCart()) {
+            $this->updateCustomPrices();
             $this->cart->save();
         }
 
@@ -54,5 +58,16 @@ class RecalculateCartOnCartView
         }
 
         return false;
+    }
+
+    protected function updateCustomPrices()
+    {
+        foreach ($this->cart->getItems() as $cartItem) {
+            if ($cartItem->getParentItemId()) {
+                continue;
+            }
+
+            $this->dailyDealApplier->apply($cartItem);
+        }
     }
 }
