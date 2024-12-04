@@ -33,7 +33,7 @@ class DailyDealApplier
 
         $isDailyDealCustomOption = $item->getProduct()->getCustomOption(\MageSuite\DailyDeal\Service\OfferManager::ITEM_OPTION_DD_OFFER);
 
-        if (!$isDailyDealCustomOption?->getValue()) {
+        if ($isDailyDealCustomOption && !$isDailyDealCustomOption->getValue()) {
             return false;
         }
 
