@@ -67,7 +67,11 @@ class RecalculateCartOnCartView
                 continue;
             }
 
-            $this->dailyDealApplier->apply($cartItem);
+            try {
+                $this->dailyDealApplier->apply($cartItem);
+            } catch (\Magento\Framework\Exception\LocalizedException $e) {
+                continue;
+            }
         }
     }
 }
