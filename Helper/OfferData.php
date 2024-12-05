@@ -21,6 +21,8 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
 
     protected \MageSuite\DailyDeal\Service\SalableStockResolver $salableStockResolver;
 
+    protected \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry;
+
     public function __construct(
         \Magento\Framework\App\Helper\Context $context,
         \MageSuite\DailyDeal\Helper\Configuration $configuration,
@@ -28,7 +30,8 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         \Magento\Framework\Stdlib\DateTime\DateTime $dateTime,
         \Magento\Catalog\Block\Product\View $productView,
         \MageSuite\Discount\Helper\Discount $discountHelper,
-        \MageSuite\DailyDeal\Service\SalableStockResolver $salableStockResolver
+        \MageSuite\DailyDeal\Service\SalableStockResolver $salableStockResolver,
+        \Magento\CatalogInventory\Api\StockRegistryInterface $stockRegistry
     ) {
         parent::__construct($context);
 
@@ -38,6 +41,7 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         $this->productView = $productView;
         $this->discountHelper = $discountHelper;
         $this->salableStockResolver = $salableStockResolver;
+        $this->stockRegistry = $stockRegistry;
     }
 
     public function prepareOfferData(\Magento\Catalog\Api\Data\ProductInterface $product): ?array
@@ -197,7 +201,7 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
             return 0;
         }
 
-        $productBackorders = $product->getExtensionAttributes()?->getStockItem()?->getBackorders();
+        $productBackorders = $this->getBackordersForProduct($product);
 
         if ($productBackorders) {
             return (int)$product->getDailyDealLimit();
@@ -207,5 +211,16 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         $offerLimit = (int)$this->getOfferLimit($product);
 
         return $offerLimit > $salableQty ? $salableQty : $offerLimit;
+    }
+
+    protected function getBackordersForProduct(\Magento\Catalog\Api\Data\ProductInterface $product): ?int
+    {
+        $stockItem = $product->getExtensionAttributes()?->getStockItem();
+
+        if ($stockItem === null) {
+            $stockItem = $this->stockRegistry->getStockItem((int)$product->getId());
+        }
+
+        return $stockItem?->getBackorders();
     }
 }
