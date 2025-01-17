@@ -150,7 +150,6 @@ class OfferTest extends \PHPUnit\Framework\TestCase
      */
     public function testItDecreaseOfferUsageAfterCreateOrder(): void
     {
-        $this->markTestSkipped();
         $qty = 2;
 
         $product = $this->productRepository->get('actual_offer');
