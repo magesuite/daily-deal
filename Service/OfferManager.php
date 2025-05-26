@@ -128,7 +128,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
             [
                 'daily_deal_enabled' => $action
             ],
-            \Magento\Store\Model\Store::DEFAULT_STORE_ID
+            $product->getStoreId()
         );
 
         if ($action == self::TYPE_REMOVE) {

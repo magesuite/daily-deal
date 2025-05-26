@@ -29,7 +29,12 @@ class SalableStockResolver
     public function execute(\Magento\Catalog\Api\Data\ProductInterface $product, $storeId = null)
     {
         try {
-            $store = $this->storeManager->getStore($storeId);
+            if ($storeId == \Magento\Store\Model\Store::DEFAULT_STORE_ID) {
+                $store = $this->storeManager->getDefaultStoreView();
+            } else {
+                $store = $this->storeManager->getStore($storeId);
+            }
+
             $website = $store->getWebsite();
             $stockId = $this->stockResolver->execute(\Magento\InventorySalesApi\Api\Data\SalesChannelInterface::TYPE_WEBSITE, $website->getCode())->getStockId();
 
