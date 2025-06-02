@@ -148,24 +148,6 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         return $this->configuration->displayOnTile();
     }
 
-    private function getOfferLimit($product)
-    {
-        $offerLimit = $product->getDailyDealLimit();
-        $quantityAndStockStatus = $product->getQuantityAndStockStatus();
-
-        if (!$quantityAndStockStatus || $product->getTypeId() === \Magento\ConfigurableProduct\Model\Product\Type\Configurable::TYPE_CODE) {
-            return $offerLimit;
-        }
-
-        $qty = isset($quantityAndStockStatus['qty']) ? $quantityAndStockStatus['qty'] : null;
-
-        if ($qty === null || $qty < 0) {
-            return $offerLimit;
-        }
-
-        return min($qty, $offerLimit);
-    }
-
     private function getProduct($product)
     {
         if ($product instanceof \Magento\Catalog\Api\Data\ProductInterface) {
@@ -200,17 +182,15 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
         if (!$this->configuration->isQtyLimitationEnabled()) {
             return 0;
         }
-
+        $offerLimit = (int) $product->getDailyDealLimit();
         $productBackorders = $this->getBackordersForProduct($product);
 
         if ($productBackorders) {
-            return (int)$product->getDailyDealLimit();
+            return $offerLimit;
         }
+        $salableQty = (int) $this->salableStockResolver->execute($product);
 
-        $salableQty = (int)$this->salableStockResolver->execute($product);
-        $offerLimit = (int)$this->getOfferLimit($product);
-
-        return $offerLimit > $salableQty ? $salableQty : $offerLimit;
+        return min($offerLimit, $salableQty);
     }
 
     protected function getBackordersForProduct(\Magento\Catalog\Api\Data\ProductInterface $product): ?int
