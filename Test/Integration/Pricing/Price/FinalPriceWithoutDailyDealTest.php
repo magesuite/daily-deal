@@ -1,7 +1,5 @@
 <?php
 
-declare(strict_types=1);
-
 namespace MageSuite\DailyDeal\Test\Integration\Pricing\Price;
 
 /**
@@ -10,8 +8,15 @@ namespace MageSuite\DailyDeal\Test\Integration\Pricing\Price;
  */
 class FinalPriceWithoutDailyDealTest extends \PHPUnit\Framework\TestCase
 {
-    protected ?\Magento\TestFramework\ObjectManager $objectManager;
-    protected ?\Magento\Catalog\Api\ProductRepositoryInterface $productRepository;
+    /**
+     * @var \Magento\TestFramework\ObjectManager
+     */
+    protected $objectManager;
+
+    /**
+     * @var \Magento\Catalog\Api\ProductRepositoryInterface
+     */
+    protected $productRepository;
 
     public function setUp(): void
     {
@@ -40,16 +45,18 @@ class FinalPriceWithoutDailyDealTest extends \PHPUnit\Framework\TestCase
      * @magentoDataFixture loadProducts
      * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
+     * @param string $priceCode
+     * @param string $expectedValue
      * @dataProvider dataProvider
      */
-    public function testItReturnCorrectPrice(string $priceCode, float $expectedValue): void
+    public function testItReturnCorrectPrice($priceCode, $expectedValue)
     {
         $product = $this->productRepository->get('active_offer');
 
         $this->assertEquals($expectedValue, $product->getPriceInfo()->getPrice($priceCode)->getAmount()->getValue());
     }
 
-    public static function dataProvider(): array
+    public function dataProvider()
     {
         return [
             ['regular_price', 10],
@@ -59,12 +66,12 @@ class FinalPriceWithoutDailyDealTest extends \PHPUnit\Framework\TestCase
         ];
     }
 
-    public static function loadProducts(): void
+    public static function loadProducts()
     {
         require __DIR__ . '/../../_files/products.php';
     }
 
-    public static function loadProductsRollback(): void
+    public static function loadProductsRollback()
     {
         require __DIR__ . '/../../_files/products_rollback.php';
     }
