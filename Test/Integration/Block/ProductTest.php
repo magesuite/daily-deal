@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MageSuite\DailyDeal\Test\Integration\Block;
 
 /**
@@ -8,25 +10,10 @@ namespace MageSuite\DailyDeal\Test\Integration\Block;
  */
 class ProductTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \Magento\TestFramework\ObjectManager
-     */
-    protected $objectManager;
-
-    /**
-     * @var \Magento\Framework\Registry
-     */
-    protected $coreRegistry;
-
-    /**
-     * @var \Magento\Catalog\Api\ProductRepositoryInterface
-     */
-    protected $productRepository;
-
-    /**
-     * @var \MageSuite\DailyDeal\Block\Product
-     */
-    protected $productBlock;
+    protected \Magento\Framework\App\ObjectManager $objectManager;
+    protected \Magento\Framework\Registry $coreRegistry;
+    protected \Magento\Catalog\Api\ProductRepositoryInterface $productRepository;
+    protected \MageSuite\DailyDeal\Block\Product $productBlock;
 
     public function setUp(): void
     {
@@ -54,11 +41,11 @@ class ProductTest extends \PHPUnit\Framework\TestCase
      * @magentoAppArea frontend
      * @magentoAppIsolation enabled
      * @magentoDbIsolation enabled
-     * @magentoDataFixture loadProducts
+     * @magentoDataFixture MageSuite_DailyDeal::Test/Integration/_files/products.php
      * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
      */
-    public function testItReturnCorrectData()
+    public function testItReturnCorrectData(): void
     {
         $product = $this->productRepository->get('active_offer');
         $this->coreRegistry->register('product', $product);
@@ -92,7 +79,7 @@ class ProductTest extends \PHPUnit\Framework\TestCase
      * @magentoDbIsolation enabled
      * @magentoConfigFixture current_store daily_deal/general/active 1
      */
-    public function testItReturnsFalseWhenNoCurrentProductIsRegistered()
+    public function testItReturnsFalseWhenNoCurrentProductIsRegistered(): void
     {
         $this->coreRegistry->register('product', null);
 
@@ -103,10 +90,10 @@ class ProductTest extends \PHPUnit\Framework\TestCase
 
     /**
      * @magentoAppIsolation enabled
-     * @magentoDataFixture loadProducts
+     * @magentoDataFixture MageSuite_DailyDeal::Test/Integration/_files/products.php
      * @magentoConfigFixture current_store daily_deal/general/active 0
      */
-    public function testItReturnsFalseIfDailyDealIsNotActive()
+    public function testItReturnsFalseIfDailyDealIsNotActive(): void
     {
         $product = $this->productRepository->get('active_offer');
 
@@ -115,15 +102,5 @@ class ProductTest extends \PHPUnit\Framework\TestCase
         $offerData = $this->productBlock->getOfferData();
 
         $this->assertFalse($offerData);
-    }
-
-    public static function loadProducts()
-    {
-        require __DIR__ . '/../_files/products.php';
-    }
-
-    public static function loadProductsRollback()
-    {
-        require __DIR__ . '/../_files/products_rollback.php';
     }
 }

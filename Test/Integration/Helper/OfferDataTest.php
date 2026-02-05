@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MageSuite\DailyDeal\Test\Integration\Helper;
 
 /**
@@ -8,21 +10,9 @@ namespace MageSuite\DailyDeal\Test\Integration\Helper;
  */
 class OfferDataTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \Magento\TestFramework\ObjectManager
-     */
-    protected $objectManager;
-
-    /**
-     * @var \MageSuite\DailyDeal\Helper\OfferData
-     *
-     */
-    protected $offerDataHelper;
-
-    /**
-     * @var \Magento\Catalog\Api\ProductRepositoryInterface
-     */
-    protected $productRepository;
+    protected \Magento\Framework\App\ObjectManager $objectManager;
+    protected \MageSuite\DailyDeal\Helper\OfferData $offerDataHelper;
+    protected \Magento\Catalog\Api\ProductRepositoryInterface $productRepository;
 
     public function setUp(): void
     {
@@ -49,11 +39,11 @@ class OfferDataTest extends \PHPUnit\Framework\TestCase
      * @magentoAppArea frontend
      * @magentoAppIsolation enabled
      * @magentoDbIsolation enabled
-     * @magentoDataFixture loadProducts
+     * @magentoDataFixture MageSuite_DailyDeal::Test/Integration/_files/products.php
      * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
      */
-    public function testItReturnEnabledDeal()
+    public function testItReturnEnabledDeal(): void
     {
         $product = $this->productRepository->getById(600);
         $offerData = $this->offerDataHelper->prepareOfferData($product);
@@ -84,11 +74,11 @@ class OfferDataTest extends \PHPUnit\Framework\TestCase
      * @magentoAppArea frontend
      * @magentoAppIsolation enabled
      * @magentoDbIsolation enabled
-     * @magentoDataFixture loadProducts
+     * @magentoDataFixture MageSuite_DailyDeal::Test/Integration/_files/products.php
      * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
      */
-    public function testItReturnDisabledDeal()
+    public function testItReturnDisabledDeal(): void
     {
         $product = $this->productRepository->getById(601);
         $offerData = $this->offerDataHelper->prepareOfferData($product);
@@ -102,11 +92,11 @@ class OfferDataTest extends \PHPUnit\Framework\TestCase
      * @magentoAppArea frontend
      * @magentoAppIsolation enabled
      * @magentoDbIsolation enabled
-     * @magentoDataFixture loadProducts
+     * @magentoDataFixture MageSuite_DailyDeal::Test/Integration/_files/products.php
      * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
      */
-    public function testItReturnsActualStockWhenDealItemLimitHigher()
+    public function testItReturnsActualStockWhenDealItemLimitHigher(): void
     {
         $product = $this->productRepository->getById(608);
         $offerData = $this->offerDataHelper->prepareOfferData($product);
@@ -120,11 +110,11 @@ class OfferDataTest extends \PHPUnit\Framework\TestCase
      * @magentoAppArea frontend
      * @magentoAppIsolation enabled
      * @magentoDbIsolation enabled
-     * @magentoDataFixture loadProducts
+     * @magentoDataFixture MageSuite_DailyDeal::Test/Integration/_files/products.php
      * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
      */
-    public function testItReturnsDisabledDealForOutOfStock()
+    public function testItReturnsDisabledDealForOutOfStock(): void
     {
         $product = $this->productRepository->getById(609);
         $offerData = $this->offerDataHelper->prepareOfferData($product);
@@ -138,7 +128,7 @@ class OfferDataTest extends \PHPUnit\Framework\TestCase
      * @magentoAppArea frontend
      * @magentoAppIsolation enabled
      * @magentoDbIsolation enabled
-     * @magentoDataFixture loadProducts
+     * @magentoDataFixture MageSuite_DailyDeal::Test/Integration/_files/products.php
      * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
      * @magentoConfigFixture current_store daily_deal/general/allow_backorders 1
@@ -157,7 +147,7 @@ class OfferDataTest extends \PHPUnit\Framework\TestCase
      * @magentoAppArea frontend
      * @magentoAppIsolation enabled
      * @magentoDbIsolation enabled
-     * @magentoDataFixture loadProducts
+     * @magentoDataFixture MageSuite_DailyDeal::Test/Integration/_files/products.php
      * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 0
      * @magentoConfigFixture current_store daily_deal/general/allow_backorders 1
@@ -176,11 +166,11 @@ class OfferDataTest extends \PHPUnit\Framework\TestCase
      * @magentoAppArea frontend
      * @magentoAppIsolation enabled
      * @magentoDbIsolation enabled
-     * @magentoDataFixture loadProducts
+     * @magentoDataFixture MageSuite_DailyDeal::Test/Integration/_files/products.php
      * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 0
      */
-    public function testItReturnCorrectDataWithDisabledLimit()
+    public function testItReturnCorrectDataWithDisabledLimit(): void
     {
         $product = $this->productRepository->getById(600);
         $offerData = $this->offerDataHelper->prepareOfferData($product);
@@ -197,24 +187,14 @@ class OfferDataTest extends \PHPUnit\Framework\TestCase
      * @magentoAppArea frontend
      * @magentoAppIsolation enabled
      * @magentoDbIsolation enabled
-     * @magentoDataFixture loadProducts
+     * @magentoDataFixture MageSuite_DailyDeal::Test/Integration/_files/products.php
      * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 0
      */
-    public function testItDisablesOfferForBundleProducts()
+    public function testItDisablesOfferForBundleProducts(): void
     {
         $product = $this->productRepository->getById(607);
         $offerData = $this->offerDataHelper->prepareOfferData($product);
         $this->assertFalse($offerData['deal']);
-    }
-
-    public static function loadProducts()
-    {
-        require __DIR__ . '/../_files/products.php';
-    }
-
-    public static function loadProductsRollback()
-    {
-        require __DIR__ . '/../_files/products_rollback.php';
     }
 }
