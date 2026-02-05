@@ -1,34 +1,21 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MageSuite\DailyDeal\Test\Integration\Service;
 
 /**
  * @magentoAppArea frontend
  * @magentoAppIsolation enabled
  * @magentoDbIsolation enabled
- * @magentoDataFixture loadProducts
+ * @magentoDataFixture MageSuite_DailyDeal::Test/Integration/_files/products.php
  */
 class OfferManagerTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \Magento\TestFramework\ObjectManager
-     */
-    protected $objectManager;
-
-    /**
-     * @var \Magento\Catalog\Api\ProductRepositoryInterface
-     */
-    protected $productRepository;
-
-    /**
-     * @var \MageSuite\DailyDeal\Service\OfferManager
-     */
-    protected $offerManager;
-
-    /**
-     * @var \MageSuite\DailyDeal\Model\ResourceModel\Offer
-     */
-    protected $offerResource;
+    protected \Magento\Framework\App\ObjectManager $objectManager;
+    protected \Magento\Catalog\Api\ProductRepositoryInterface $productRepository;
+    protected \MageSuite\DailyDeal\Service\OfferManager $offerManager;
+    protected \MageSuite\DailyDeal\Model\ResourceModel\Offer $offerResource;
 
     public function setUp(): void
     {
@@ -42,7 +29,7 @@ class OfferManagerTest extends \PHPUnit\Framework\TestCase
      * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
      */
-    public function testItReturnsCorrectOffers()
+    public function testItReturnsCorrectOffers(): void
     {
         $offers = $this->offerManager->getOffers();
 
@@ -65,7 +52,7 @@ class OfferManagerTest extends \PHPUnit\Framework\TestCase
      * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
      */
-    public function testItReturnsCorrectData()
+    public function testItReturnsCorrectData(): void
     {
         $date = new \DateTime('2018-03-20 01:00:00');
         $storeId = 1;
@@ -113,7 +100,7 @@ class OfferManagerTest extends \PHPUnit\Framework\TestCase
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
      * @magentoConfigFixture current_store daily_deal/general/allow_backorders 1
      */
-    public function testItReturnsCorrectDataForBackorders()
+    public function testItReturnsCorrectDataForBackorders(): void
     {
         $date = new \DateTime('2018-03-20 01:00:00');
         $storeId = 1;
@@ -135,7 +122,7 @@ class OfferManagerTest extends \PHPUnit\Framework\TestCase
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
      * @magentoConfigFixture current_store daily_deal/general/allow_backorders 0
      */
-    public function testItReturnsNoBackordersWhenDisabled()
+    public function testItReturnsNoBackordersWhenDisabled(): void
     {
         $date = new \DateTime('2018-03-20 01:00:00');
         $storeId = 1;
@@ -154,7 +141,7 @@ class OfferManagerTest extends \PHPUnit\Framework\TestCase
      * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
      */
-    public function testItCorrectlyValidatesOfferWithAndWithoutLimit()
+    public function testItCorrectlyValidatesOfferWithAndWithoutLimit(): void
     {
         $product = $this->productRepository->get('active_offer');
         $this->assertTrue($this->offerManager->validateOfferInQuote($product, 10));
@@ -164,15 +151,5 @@ class OfferManagerTest extends \PHPUnit\Framework\TestCase
 
         $product->setDailyDealLimit(0);
         $this->assertFalse($this->offerManager->validateOfferInQuote($product, 10));
-    }
-
-    public static function loadProducts()
-    {
-        require __DIR__ . '/../_files/products.php';
-    }
-
-    public static function loadProductsRollback()
-    {
-        require __DIR__ . '/../_files/products_rollback.php';
     }
 }
