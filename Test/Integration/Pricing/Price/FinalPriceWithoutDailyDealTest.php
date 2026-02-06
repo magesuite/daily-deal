@@ -49,9 +49,6 @@ class FinalPriceWithoutDailyDealTest extends \PHPUnit\Framework\TestCase
         $this->assertEquals($expectedValue, $product->getPriceInfo()->getPrice($priceCode)->getAmount()->getValue());
     }
 
-    /**
-     * @return array
-     */
     public static function dataProvider(): array
     {
         return [
