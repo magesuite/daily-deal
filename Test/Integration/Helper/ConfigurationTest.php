@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MageSuite\DailyDeal\Test\Integration\Helper;
 
 /**
@@ -7,15 +9,8 @@ namespace MageSuite\DailyDeal\Test\Integration\Helper;
  */
 class ConfigurationTest extends \PHPUnit\Framework\TestCase
 {
-    /**
-     * @var \Magento\TestFramework\ObjectManager
-     */
-    protected $objectManager;
-
-    /**
-     * @var \MageSuite\DailyDeal\Helper\Configuration
-     */
-    protected $configurationHelper;
+    protected ?\Magento\TestFramework\ObjectManager $objectManager;
+    protected ?\MageSuite\DailyDeal\Helper\Configuration $configurationHelper;
 
     public function setUp(): void
     {

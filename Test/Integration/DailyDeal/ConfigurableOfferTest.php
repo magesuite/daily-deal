@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MageSuite\DailyDeal\Test\Integration\DailyDeal;
 
 class ConfigurableOfferTest extends \PHPUnit\Framework\TestCase

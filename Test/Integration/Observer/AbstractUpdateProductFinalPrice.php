@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MageSuite\DailyDeal\Test\Integration\Observer;
 
 class AbstractUpdateProductFinalPrice extends \PHPUnit\Framework\TestCase

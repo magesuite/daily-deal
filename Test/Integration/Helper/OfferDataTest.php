@@ -10,9 +10,9 @@ namespace MageSuite\DailyDeal\Test\Integration\Helper;
  */
 class OfferDataTest extends \PHPUnit\Framework\TestCase
 {
-    protected \Magento\Framework\App\ObjectManager $objectManager;
-    protected \MageSuite\DailyDeal\Helper\OfferData $offerDataHelper;
-    protected \Magento\Catalog\Api\ProductRepositoryInterface $productRepository;
+    protected ?\Magento\Framework\App\ObjectManager $objectManager;
+    protected ?\MageSuite\DailyDeal\Helper\OfferData $offerDataHelper;
+    protected ?\Magento\Catalog\Api\ProductRepositoryInterface $productRepository;
 
     public function setUp(): void
     {

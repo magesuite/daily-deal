@@ -12,10 +12,10 @@ namespace MageSuite\DailyDeal\Test\Integration\Service;
  */
 class OfferManagerTest extends \PHPUnit\Framework\TestCase
 {
-    protected \Magento\Framework\App\ObjectManager $objectManager;
-    protected \Magento\Catalog\Api\ProductRepositoryInterface $productRepository;
-    protected \MageSuite\DailyDeal\Service\OfferManager $offerManager;
-    protected \MageSuite\DailyDeal\Model\ResourceModel\Offer $offerResource;
+    protected ?\Magento\Framework\App\ObjectManager $objectManager;
+    protected ?\Magento\Catalog\Api\ProductRepositoryInterface $productRepository;
+    protected ?\MageSuite\DailyDeal\Service\OfferManager $offerManager;
+    protected ?\MageSuite\DailyDeal\Model\ResourceModel\Offer $offerResource;
 
     public function setUp(): void
     {
