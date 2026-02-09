@@ -10,10 +10,10 @@ namespace MageSuite\DailyDeal\Test\Integration\Block;
  */
 class ProductTest extends \PHPUnit\Framework\TestCase
 {
-    protected \Magento\Framework\App\ObjectManager $objectManager;
-    protected \Magento\Framework\Registry $coreRegistry;
-    protected \Magento\Catalog\Api\ProductRepositoryInterface $productRepository;
-    protected \MageSuite\DailyDeal\Block\Product $productBlock;
+    protected ?\Magento\Framework\App\ObjectManager $objectManager;
+    protected ?\Magento\Framework\Registry $coreRegistry;
+    protected ?\Magento\Catalog\Api\ProductRepositoryInterface $productRepository;
+    protected ?\MageSuite\DailyDeal\Block\Product $productBlock;
 
     public function setUp(): void
     {

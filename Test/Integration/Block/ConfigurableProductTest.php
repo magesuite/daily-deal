@@ -1,15 +1,14 @@
 <?php
 
+declare(strict_types=1);
+
 namespace MageSuite\DailyDeal\Test\Integration\Block;
 
 class ConfigurableProductTest extends \PHPUnit\Framework\TestCase
 {
     protected ?\Magento\Framework\ObjectManagerInterface $objectManager = null;
-
     protected ?\Magento\Framework\Registry $coreRegistry = null;
-
     protected ?\Magento\Catalog\Api\ProductRepositoryInterface $productRepository = null;
-
     protected ?\MageSuite\DailyDeal\Block\Product $productBlock = null;
 
     public function setUp(): void

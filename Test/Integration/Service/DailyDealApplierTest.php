@@ -1,5 +1,7 @@
 <?php
 
+declare(strict_types=1);
+
 namespace Integration\Service;
 
 class DailyDealApplierTest extends \Magento\TestFramework\TestCase\AbstractController
