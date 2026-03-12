@@ -45,6 +45,9 @@ class Offer extends \Magento\Catalog\Model\ResourceModel\AbstractResource
             ->addFieldToFilter('daily_deal_to', ['gt' => $currentDateFilter])
             ->addFieldToFilter('daily_deal_enabled', ['eq' => 0]);
 
+        $linkField = $productsCollection->getEntity()->getLinkField();
+        $productsCollection->getSelect()->order(sprintf('e.%s %s', $linkField, \Zend_Db_Select::SQL_ASC));
+
         $productsCollection = $this->addDailyDealEnabledCondition($productsCollection);
         $productsCollection = $this->addBackOrdersData($productsCollection);
 
