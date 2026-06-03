@@ -56,7 +56,7 @@ class OfferTest extends \PHPUnit\Framework\TestCase
             );
 
             $this->assertNotNull($option);
-            $this->assertTrue((boolean)$option->getValue());
+            $this->assertTrue((bool)$option->getValue());
 
             $buyRequest = $item->getOptionByCode('info_buyRequest');
 

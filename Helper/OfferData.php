@@ -88,7 +88,7 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
             return false;
         }
 
-        $offerEnabled = (boolean)$product->getDailyDealEnabled();
+        $offerEnabled = (bool)$product->getDailyDealEnabled();
         if (!$offerEnabled) {
             return false;
         }

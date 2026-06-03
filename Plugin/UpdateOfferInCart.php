@@ -57,7 +57,7 @@ class UpdateOfferInCart
                 continue;
             }
 
-            $qty = isset($data[$itemId]['qty']) ? (double)$data[$itemId]['qty'] : false;
+            $qty = isset($data[$itemId]['qty']) ? (float)$data[$itemId]['qty'] : false;
             $oldQty = $item->getQty();
 
             if (!$qty || $qty <= $oldQty) {

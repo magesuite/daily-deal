@@ -63,7 +63,7 @@ class ConfigurableOfferTest extends \PHPUnit\Framework\TestCase
 
             $option = $item->getOptionByCode(\MageSuite\DailyDeal\Service\OfferManager::ITEM_OPTION_DD_OFFER);
             $this->assertNotNull($option);
-            $this->assertTrue((boolean)$option->getValue());
+            $this->assertTrue((bool)$option->getValue());
 
             $buyRequest = $item->getOptionByCode('info_buyRequest');
             $this->assertArrayHasKey(\MageSuite\DailyDeal\Service\OfferManager::ITEM_OPTION_DD_OFFER, $buyRequest);
