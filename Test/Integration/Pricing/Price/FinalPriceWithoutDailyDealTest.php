@@ -40,8 +40,8 @@ class FinalPriceWithoutDailyDealTest extends \PHPUnit\Framework\TestCase
      * @magentoDataFixture MageSuite_DailyDeal::Test/Integration/_files/products.php
      * @magentoConfigFixture current_store daily_deal/general/active 1
      * @magentoConfigFixture current_store daily_deal/general/use_qty_limitation 1
-     * @dataProvider dataProvider
      */
+    #[\PHPUnit\Framework\Attributes\DataProvider('dataProvider')]
     public function testItReturnCorrectPrice(string $priceCode, int $expectedValue): void
     {
         $product = $this->productRepository->get('active_offer');
