@@ -85,7 +85,7 @@ class OfferDataTest extends \PHPUnit\Framework\TestCase
 
         $this->assertFalse($offerData['deal']);
 
-        $this->assertEquals(2, $offerData['items']);
+        $this->assertEquals(0, $offerData['items']);
     }
 
     /**

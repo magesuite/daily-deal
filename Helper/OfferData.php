@@ -60,9 +60,10 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
             return $product->getData('daily_deal_offer_data');
         }
 
+        $isOfferEnabled = $this->isOfferEnabled($product);
         $result = [
-            'deal' => $this->isOfferEnabled($product),
-            'items' => $this->getItemsOfferLimit($product),
+            'deal' => $isOfferEnabled,
+            'items' => $isOfferEnabled ? $this->getItemsOfferLimit($product) : 0,
             'from' => $product->getDailyDealFrom() === null ? null : strtotime($product->getDailyDealFrom()),
             'initialAmount' => $product->getDailyDealInitialAmount(),
             'to' => $product->getDailyDealTo() === null ? null : strtotime($product->getDailyDealTo()),
