@@ -36,22 +36,50 @@ class Offer extends \Magento\Catalog\Model\ResourceModel\AbstractResource
     {
         $currentDateFilter = date('Y-m-d H:i:s', $timestamp);
 
-        $productsCollection = $this->productCollectionFactory->create();
+        $enabledOffers = $this->getEnabledOffers($storeId);
+        $pendingOffers = $this->getPendingOffers($currentDateFilter, $storeId);
+
+        $offers = $enabledOffers + $pendingOffers;
+        ksort($offers, SORT_NUMERIC);
+
+        return $offers;
+    }
+
+    protected function getEnabledOffers($storeId): array
+    {
+        $productsCollection = $this->createOffersCollection($storeId);
 
         $productsCollection
-            ->setStoreId($storeId)
-            ->addAttributeToSelect('daily_deal_limit')
+            ->addAttributeToSelect(['daily_deal_from', 'daily_deal_to'])
+            ->addFieldToFilter('daily_deal_enabled', ['eq' => 1]);
+
+        return $productsCollection->getItems();
+    }
+
+    protected function getPendingOffers($currentDateFilter, $storeId): array
+    {
+        $productsCollection = $this->createOffersCollection($storeId);
+
+        $productsCollection
             ->addFieldToFilter('daily_deal_from', ['lt' => $currentDateFilter])
             ->addFieldToFilter('daily_deal_to', ['gt' => $currentDateFilter])
             ->addFieldToFilter('daily_deal_enabled', ['eq' => 0]);
 
+        return $productsCollection->getItems();
+    }
+
+    protected function createOffersCollection($storeId): \Magento\Catalog\Model\ResourceModel\Product\Collection
+    {
+        $productsCollection = $this->productCollectionFactory->create();
+
+        $productsCollection
+            ->setStoreId($storeId)
+            ->addAttributeToSelect('daily_deal_limit');
+
         $linkField = $productsCollection->getEntity()->getLinkField();
         $productsCollection->getSelect()->order(sprintf('e.%s %s', $linkField, \Zend_Db_Select::SQL_ASC));
 
-        $productsCollection = $this->addDailyDealEnabledCondition($productsCollection);
-        $productsCollection = $this->addBackOrdersData($productsCollection);
-
-        return $productsCollection->getItems();
+        return $this->addBackOrdersData($productsCollection);
     }
 
     protected function addBackOrdersData(\Magento\Catalog\Model\ResourceModel\Product\Collection $productsCollection): \Magento\Catalog\Model\ResourceModel\Product\Collection
@@ -64,30 +92,6 @@ class Offer extends \Magento\Catalog\Model\ResourceModel\AbstractResource
             'cataloginventory_stock_item.product_id = e.entity_id',
             ['backorders' => 'backorders']
         );
-
-        return $productsCollection;
-    }
-
-    private function addDailyDealEnabledCondition(\Magento\Catalog\Model\ResourceModel\Product\Collection $productsCollection)
-    {
-        $select = $productsCollection->getSelect();
-
-        foreach ($select->getPart(\Magento\Framework\DB\Select::COLUMNS) as $columnEntry) {
-            list($correlationName, $column, $alias) = $columnEntry;
-
-            if ($alias == 'daily_deal_enabled') {
-                if ($column instanceof \Zend_Db_Expr) {
-                    $productsCollection->getSelect()->orWhere("{$column} = ?", 1);
-                    return $productsCollection;
-                } else {
-                    $field = sprintf('%s.%s', $correlationName, $column);
-                    $condition = $select->getConnection()->prepareSqlCondition($field, ['eq' => 1]);
-
-                    $productsCollection->getSelect()->orWhere($condition);
-                    return $productsCollection;
-                }
-            }
-        }
 
         return $productsCollection;
     }
@@ -113,29 +117,17 @@ class Offer extends \Magento\Catalog\Model\ResourceModel\AbstractResource
 
     public function getProductQtyInCart($productId, $quoteId): float
     {
-        $table = 'quote_item';
+        $connection = $this->resource->getConnection();
 
-        $select = $this->resource->getConnection()
+        $select = $connection
             ->select()
             ->from(
-                ['qi' => $this->resource->getTableName($table)],
-                ['qi.qty']
+                ['qi' => $this->resource->getTableName('quote_item')],
+                ['qty' => new \Zend_Db_Expr('SUM(qi.qty)')]
             )
             ->where('qi.product_id = ?', $productId)
             ->where('qi.quote_id = ?', $quoteId);
 
-        $result = $this->resource->getConnection()->fetchCol($select);
-
-        if (empty($result)) {
-            return 0;
-        }
-
-        $productQty = 0;
-
-        foreach ($result as $itemQty) {
-            $productQty += $itemQty;
-        }
-
-        return $productQty;
+        return (float)$connection->fetchOne($select);
     }
 }

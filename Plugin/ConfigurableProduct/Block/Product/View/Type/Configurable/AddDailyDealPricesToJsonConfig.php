@@ -37,13 +37,18 @@ class AddDailyDealPricesToJsonConfig
         }
 
         $result = $this->jsonDecoder->decode($result);
+
+        $priceInfo = $subject->getProduct()->getPriceInfo();
+        $dailyDealOldPrice = [
+            'amount' => $this->localeFormat->getNumber($priceInfo->getPrice('final_price_without_daily_deal')->getValue())
+        ];
+        $dailyDealPrice = [
+            'amount' => $this->localeFormat->getNumber($priceInfo->getPrice('configurable_offer_price')->getValue())
+        ];
+
         foreach ($result['optionPrices'] as &$optionPrice) {
-            $optionPrice['dailyDealOldPrice'] = [
-                'amount' => $this->localeFormat->getNumber($subject->getProduct()->getPriceInfo()->getPrice('final_price_without_daily_deal')->getValue())
-            ];
-            $optionPrice['dailyDealPrice'] = [
-                'amount' => $this->localeFormat->getNumber($subject->getProduct()->getPriceInfo()->getPrice('configurable_offer_price')->getValue())
-            ];
+            $optionPrice['dailyDealOldPrice'] = $dailyDealOldPrice;
+            $optionPrice['dailyDealPrice'] = $dailyDealPrice;
         }
 
         return $this->jsonEncoder->encode($result);
