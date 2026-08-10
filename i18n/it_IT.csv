@@ -4,3 +4,8 @@ Hour,Ora
 Sec,Sec
 General,Generale
 Enabled,Abilitato
+"Requested amount of %1 isn't available.","La quantità richiesta di %1 non è disponibile."
+"Requested amount of %1 in special price isn't available. %2 item(s) have been added with regular price.","La quantità richiesta di %1 al prezzo speciale non è disponibile. %2 articolo(i) sono stati aggiunti al prezzo normale."
+"Offer is ended and product was removed from the cart.","L'offerta è terminata e il prodotto è stato rimosso dal carrello."
+"Limited time offer","Offerta a tempo limitato"
+"items left","articoli rimanenti"

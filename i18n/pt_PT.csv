@@ -2,3 +2,8 @@ Day,Dia
 Hour,Hora
 General,Geral
 Enabled,Ativo
+"Requested amount of %1 isn't available.","A quantidade solicitada de %1 não está disponível."
+"Requested amount of %1 in special price isn't available. %2 item(s) have been added with regular price.","A quantidade solicitada de %1 ao preço especial não está disponível. %2 artigo(s) foram adicionados ao preço normal."
+"Offer is ended and product was removed from the cart.","A oferta terminou e o produto foi removido do carrinho."
+"Limited time offer","Oferta de tempo limitado"
+"items left","artigos restantes"

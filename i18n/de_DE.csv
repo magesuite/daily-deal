@@ -9,3 +9,5 @@ General,Allgemein
 Enabled,Aktiviert
 "Limited time offer","Zeitlich begrenztes Angebot"
 "items left","Artikel verfügbar"
+"Requested amount of %1 in special price isn't available. %2 item(s) have been added with regular price.","Die angegebene Menge von %1 zum Sonderpreis ist nicht verfügbar. %2 Artikel wurden zum regulären Preis hinzugefügt."
+"Offer is ended and product was removed from the cart.","Das Angebot ist beendet und das Produkt wurde aus dem Warenkorb entfernt."
