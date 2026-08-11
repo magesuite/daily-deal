@@ -4,3 +4,8 @@ Hour,Uur
 Sec,Sec
 General,Algemeen
 Enabled,Ingeschakeld
+"Requested amount of %1 isn't available.","De gevraagde hoeveelheid van %1 is niet beschikbaar."
+"Requested amount of %1 in special price isn't available. %2 item(s) have been added with regular price.","De gevraagde hoeveelheid van %1 tegen speciale prijs is niet beschikbaar. %2 artikel(en) zijn toegevoegd tegen de normale prijs."
+"Offer is ended and product was removed from the cart.","De aanbieding is beëindigd en het product is uit de winkelwagen verwijderd."
+"Limited time offer","Tijdelijke aanbieding"
+"items left","artikelen over"
