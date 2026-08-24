@@ -70,6 +70,8 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
         $this->getProductsQuantities($offers);
         $isQtyLimitationEnabled = $this->configuration->isQtyLimitationEnabled();
 
+        $changedProducts = [];
+
         foreach ($offers as $offer) {
             $action = $this->getOfferAction($offer, $isQtyLimitationEnabled, $storeId);
 
@@ -77,11 +79,32 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
                 continue;
             }
 
-            $this->applyAction($offer, $action);
+            $this->applyAction($offer, $action, true);
+            $changedProducts[] = $offer;
             $amountOfChangedOffers++;
         }
 
+        $this->refreshChangedProducts($changedProducts);
+
         return $amountOfChangedOffers;
+    }
+
+    protected function refreshChangedProducts(array $changedProducts): void
+    {
+        if (empty($changedProducts)) {
+            return;
+        }
+
+        $productIds = [];
+        foreach ($changedProducts as $product) {
+            $productIds[] = $product->getId();
+        }
+
+        $this->reindexProducts($productIds);
+
+        foreach ($changedProducts as $product) {
+            $this->refreshProductCache($product);
+        }
     }
 
     public function getOffers()
@@ -115,7 +138,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
         return null;
     }
 
-    public function applyAction($product, $action)
+    public function applyAction($product, $action, $deferRefresh = false)
     {
         $product->setDailyDealEnabled($action);
 
@@ -133,6 +156,10 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
 
         if ($action == self::TYPE_REMOVE) {
             $this->removeProductFromQuotes($product);
+        }
+
+        if ($deferRefresh) {
+            return;
         }
 
         $this->refreshProductIndex($product);
@@ -167,13 +194,22 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
 
     public function refreshProductIndex($product)
     {
+        $this->reindexProducts([$product->getId()]);
+    }
+
+    public function reindexProducts(array $productIds)
+    {
+        if (empty($productIds)) {
+            return;
+        }
+
         $indexes = ['catalogsearch_fulltext', 'catalog_product_price'];
 
         foreach ($indexes as $indexId) {
             /** @var \Magento\Indexer\Model\Indexer $indexer */
             $indexer = $this->indexerFactory->create();
             $indexer->load($indexId);
-            $indexer->reindexRow($product->getId());
+            $indexer->reindexList($productIds);
         }
     }
 
@@ -268,7 +304,7 @@ class OfferManager implements \MageSuite\DailyDeal\Service\OfferManagerInterface
         );
 
         if ($newValue == 0) {
-            $this->applyAction($product, self::TYPE_REMOVE);
+            $this->applyAction($product, self::TYPE_REMOVE, true);
         }
 
         $this->refreshProductIndex($product);
