@@ -84,12 +84,8 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
 
     public function isOfferEnabled(\Magento\Catalog\Api\Data\ProductInterface $product): bool
     {
-        $product = $this->getProduct($product);
-        if (!$product || !$product->getId()) {
-            return false;
-        }
-
         $offerEnabled = (bool)$product->getDailyDealEnabled();
+
         if (!$offerEnabled) {
             return false;
         }
@@ -102,20 +98,20 @@ class OfferData extends \Magento\Framework\App\Helper\AbstractHelper
             return false;
         }
 
+        $offerTo = $product->getDailyDealTo();
+
+        if ($offerTo !== null && $this->dateTime->gmtTimestamp() >= strtotime($offerTo)) {
+            return false;
+        }
+
         if ($this->salableStockResolver->execute($product) < 0) {
             return false;
         }
 
-        $offerTo = $product->getDailyDealTo();
-
-        if ($offerTo === null) {
-            return true;
-        }
-
-        return $this->dateTime->gmtTimestamp() < strtotime($offerTo);
+        return true;
     }
 
-    public function getPriceAndDiscountWithoutDD($product)
+    public function getPriceAndDiscountWithoutDD(\Magento\Catalog\Api\Data\ProductInterface $product): array
     {
         $result = [
             'oldDiscount' => $this->getDiscountWithoutDD($product)
