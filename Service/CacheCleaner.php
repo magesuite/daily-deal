@@ -5,11 +5,6 @@ namespace MageSuite\DailyDeal\Service;
 class CacheCleaner
 {
     /**
-     * @var \MageSuite\DailyDeal\Block\Product
-     */
-    protected $productBlock;
-
-    /**
      * @var \Magento\Framework\App\CacheInterface
      */
     protected $cache;
@@ -25,28 +20,25 @@ class CacheCleaner
     protected $eventManager;
 
     public function __construct(
-        \MageSuite\DailyDeal\Block\Product $productBlock,
         \Magento\Framework\App\CacheInterface $cache,
         \Magento\Framework\Indexer\CacheContext $cacheContext,
         \Magento\Framework\Event\Manager $eventManager
     ) {
-        $this->productBlock = $productBlock;
         $this->cache = $cache;
         $this->cacheContext = $cacheContext;
         $this->eventManager = $eventManager;
     }
 
-    public function refreshProductCache($product)
+    public function refreshProductCache(?\Magento\Catalog\Api\Data\ProductInterface $product): void
     {
         if (!$product) {
-            return false;
+            return;
         }
 
-        $blockCacheTag = $this->productBlock->getCacheTag($product->getId());
-        $tags = array_merge($product->getIdentities(), [$blockCacheTag, 'virtual_category']);
+        $tags = array_merge($product->getIdentities(), ['virtual_category']);
 
         if (empty($tags)) {
-            return false;
+            return;
         }
 
         $this->cache->clean($tags);
